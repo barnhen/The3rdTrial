@@ -149,11 +149,13 @@ void player::Update(std::vector<std::vector<int> >& map)
 			//al_draw_filled_rectangle(destrect.x, destrect.y,destrect.w,destrect.h, al_map_rgba(255,0,255,100));
 
 			
-			if (collision(&box, &destrect))
+			if (collision(&
+				, &destrect))
 			{
 				nc = true;
 				//below condition make the player hit the ground when he falls by gravity
-				if (isScrolling == 1) {
+				//if (isScrolling == 1) 
+				//{
 					if(destrect.y >= box.y + pos.h - 11)
 					{
 						ground = true;
@@ -161,110 +163,48 @@ void player::Update(std::vector<std::vector<int> >& map)
 					}
 					else if (destrect.y + destrect.h <= box.y + 11)
 					{
-						//box.x++; // to uncomment
-						player::coord.x = player::coord.x - player::velX;
-						//player::coord.x = player::coord.x - player::velCoordX;
-						//player::camera.x = player::camera.x - player::velCamX;
-						//SetXvel(4);
+						player::box.x = player::box.x - player::velX;
+						//player::coord.x = player::coord.x - player::velX;
 						velY = 5; // this will be gravity
 					}
 
 					//horizontal box collision check begin
 					//will stop the player the pass through box on x direction
 					//pushing to left
-					if (pos.x + pos.w > destrect.x - 5 && 
+					if (pos.x + pos.w >= destrect.x - 5 && 
 						box.y + pos.h >= destrect.y + 6 && 
-						pos.x + pos.w <= destrect.x + 20)
+						pos.x + pos.w <= destrect.x +20)
 					{
-						//if (isScrolling==0) //not scrolling
-						//{
-						//	//velX = 0;
-						//	//box.x--; // to uncomment
-						//	player::box.x = player::box.x - player::velCoordX;
-						//	//player::coord.x = player::coord.x - player::velCoordX;
+						player::box.x = player::box.x - player::velX; // we stop the player from moving to right
+						player::pos.x = player::pos.x - player::velPosX; // we stop the posx of player from increasing
 
-							player::coord.x = player::coord.x - player::velX;
-						//	SetXvel(0);
-						//	SetCamXvel(0);
-						//}
+						if (isScrolling == 1) {player::coord.x = player::coord.x - player::velPosX;std::cout<<"pushing left col"<<std::endl;}
 					
 						std::cout<<"pushing left"<<std::endl;
+						//std::cout<<"destrect push right if is "<<destrect.x<<std::endl;
 
 					}
 					//pushing to right
-					else if (pos.x <= destrect.x + destrect.w &&
+					else if (pos.x - box.w <= destrect.x + destrect.w + 40 &&
 							 box.y + pos.h >= destrect.y + 6)
 					{
-						//velX = 0;
-						//box.x++; // to uncomment
-						//player::coord.x = player::coord.x + player::velCoordX; // works
-						player::coord.x -= player::velX * player::dirX; // works too
-						player::box.x -= player::velX * player::dirX; // works too
+						//posx=344 box.w=50 destrect.x=228 destrect.w=50 destrect.y
+						//player::box.x = player::box.x + player::velX; // we stop the player from moving to right
+						//player::pos.x = player::pos.x + player::velPosX; // we stop the posx of player from increasing
+						player::box.x = player::box.x - player::velX; // we stop the player from moving to left
+						player::pos.x = player::pos.x + player::velPosX; // we stop the posx of player from decreasing
+
+						if (isScrolling == 1) {player::coord.x = player::coord.x + player::velCoordX;std::cout<<"pushing right col"<<std::endl;}// we stop the posx of player from increasing
+
+
 					
-						SetVel(0);
-						//player::coord.x = player::coord.x + player::velCoordX;
-											//box.x = box.x + velX; //?
-						SetXvel(0);
-						SetCamXvel(0);
+						//SetXvel(0);
+						//SetCamXvel(0);
+
 						std::cout<<"pushing right"<<std::endl;
 					}
 					//horizontal box collision check end
-				} // end if isScrolling
-				else // not scrolling
-				{
-					if(destrect.y >= box.y + box.h - 11)
-					{
-						ground = true;
-						velY= 0 ;
-					}
-					else if (destrect.y + destrect.h <= box.y + 11)
-					{
-						//box.x++; // to uncomment
-						player::box.x = player::box.x - player::velX;
-						//player::coord.x = player::coord.x - player::velCoordX;
-						//player::camera.x = player::camera.x - player::velCamX;
-						//SetXvel(4);
-						velY = 5; // this will be gravity
-					}
-
-					//horizontal box collision check begin
-					//will stop the player the pass through box on x direction
-					//pushing to left
-					if (box.x + box.w > destrect.x - 5 && 
-						box.y + box.h >= destrect.y + 6 && 
-						box.x + box.w <= destrect.x + 20)
-					{
-						//if (isScrolling==0) //not scrolling
-						//{
-						//	//velX = 0;
-						//	//box.x--; // to uncomment
-						//	player::box.x = player::box.x - player::velCoordX;
-						//	//player::coord.x = player::coord.x - player::velCoordX;
-							player::box.x = player::box.x - player::velX;
-						//	SetXvel(0);
-						//	SetCamXvel(0);
-						//}
-					
-						std::cout<<"pushing left"<<std::endl;
-
-					}
-					//pushing to right
-					else if (box.x <= destrect.x + destrect.w &&
-							 box.y + box.h >= destrect.y + 6)
-					{
-						//velX = 0;
-						//box.x++; // to uncomment
-						//player::coord.x = player::coord.x + player::velCoordX; // works
-						player::box.x -= player::velX * player::dirX; // works too
-					
-						//player::coord.x = player::coord.x + player::velCoordX;
-											//box.x = box.x + velX; //?
-						SetXvel(0);
-						SetCamXvel(0);
-						std::cout<<"pushing right"<<std::endl;
-					}
-					//horizontal box collision check end
-				} // end if isScrolling
+				//} // end if isScrolling
 			}// end if collision(&box, &destrect)
 		} //end for j < end
 	}// end for map.size()
