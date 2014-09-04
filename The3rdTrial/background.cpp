@@ -1,9 +1,11 @@
 #include "background.h"
+//#include <iostream>
 
 background::background(ALLEGRO_BITMAP *bgSheet, char* filename, ALLEGRO_BITMAP *bgImage)
 {
 	//tileSize = 50;
-	coord.x =  coord.y = 0;
+	coord.x =  0;
+	coord.y = 0;
 	coord.w = WIDTH;
 	coord.h = HEIGHT;
 	bgImg = bgImage;
@@ -22,6 +24,17 @@ background::~background(void)
 }
 
 
+void background::SetBlockRectY(int y)
+{
+	blockrect.y = y;;
+}
+
+void background::SetDestRectY(int y)
+{
+	destrect.y = y;
+}
+
+
 void background::loadmap(const char* filename)
 {
 	std::ifstream in (filename);
@@ -29,19 +42,21 @@ void background::loadmap(const char* filename)
 	{
 		std::cout<<"Problem loading the file"<<std::endl;
 	}
-	int width,height;
-	in >> width;
-	in >> height;
+	int mapWidth,mapHeight;
+	in >> mapWidth;
+	in >> mapHeight;
+	std::cout<<"mapWidth"<<mapWidth<<std::endl;
+	std::cout<<"mapHeight"<<mapHeight<<std::endl;
 	int current; //current block tile number
-	for (int i = 0; i < height; i++)
+	for (int i = 0; i < mapHeight; i++)
 	{
 		std::vector<int> vec;
 
-		for (int j = 0; j < width; j++)
+		for (int j = 0; j < mapWidth; j++)
 		{
 			if(in.eof())
 			{
-				std::cout<<"File end has reached too soon"<<std::endl;;
+				std::cout<<"File end has reached too soon"<<std::endl;
 				return;
 			}
 			
@@ -99,15 +114,25 @@ void background::showmap()
 			if (map[i][j] !=0)
 			{
 				//we calculate the position in the TileSet-1.bmp image
-				sprite blockrect = {
-										//because coord of tileset begins with 0 and not 1 I have to do (tilesize * tilenumber) minus 1
-										(map[i][j]-1) * tileSize,0,tileSize,tileSize
-									 };
+				blockrect.x = (map[i][j]-1) * tileSize;
+				blockrect.y = 0;
+				blockrect.w = tileSize; 
+				blockrect.h = tileSize;
+
+				//sprite blockrect = {
+				//						//because coord of tileset begins with 0 and not 1 I have to do (tilesize * tilenumber) minus 1
+				//						(map[i][j]-1) * tileSize,0,tileSize,tileSize										
+				//					 };
+				//std::cout<<"blockrect.x"<<blockrect.x<<"|blockrect.y"<<blockrect.y<<"|blockrect.w"<<blockrect.w<<"blockrect.h"<<blockrect.h<<std::endl;
 
 				//destrect = destination rectangle and in the screen (so for example if the camera at 100px position and the tile is at 120px position, we show the tile at 20px position
-				sprite destrect = {
-										j * tileSize - coord.x, i*50
-									};
+				destrect.x = j * tileSize - coord.x;
+				destrect.y = i*50;
+				//coord.y =destrect.y;
+
+				//sprite destrect = {
+				//						j * tileSize - coord.x, i*50
+				//					};
 				//SDL_BlitSurface(block, &blockrect,screen,&destrect);
 				al_draw_bitmap_region(tileImg, blockrect.x,blockrect.y,blockrect.w,blockrect.h,destrect.x, destrect.y,0);
 				//al_flip_display();

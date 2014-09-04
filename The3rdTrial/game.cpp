@@ -6,6 +6,8 @@ std::list<base *>::iterator iter;
 sprite base::coord;
 bool keys[] = {false, false, false, false, false, false,false};
 enum KEYS{UP, DOWN, LEFT, RIGHT, SPACE, C,E};
+//bool keyHold = false;
+//int dir = 0;
 
 
 // don't forget to put allegro-5.0.10-monolith-md-debug.lib
@@ -52,30 +54,40 @@ game::~game(void)
 
 }
 
-void ShowDebugMode(void)
+void game::ShowDebugMode(void)
 {
 	//al_init_font_addon();
 	//al_init_ttf_addon();
 	al_draw_textf(font18, al_map_rgb(255, 255, 0), 5, 5, 0, "FPS: %i", gameFPS); // display game FPS on screen
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "player x vel: %i", player1->GetXVel()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 90, 25, 0, "player dirX: %i", player1->GetDirX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 180, 25, 0, "player posX: %i", player1->GetPos()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 270, 25, 0, "player box x: %i", player1->GetRect().x);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 360, 25, 0, "player box y: %i", player1->GetRect().y);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 25, 0, "player cam x: %i", player1->GetCamera().x);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 540, 25, 0, "player y vel: %i", player1->GetYVel());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 25, 0, "player dirX: %i", player1->GetDirX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "player posX: %i", player1->GetPos().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 35, 0, "player posY: %i", player1->GetPos().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 35, 0, "player box x: %i", player1->GetRect().x);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "player box y: %i", player1->GetRect().y);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 35, 0, "player cam x: %i", player1->GetCamera().x);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 500, 35, 0, "player y vel: %i", player1->GetYVel());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 600, 35, 0, "player y vel: %i", player1->GetYVel());
+
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 45, 0, "player desX: %i", player1->GetDestRect().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 45, 0, "player desY: %i", player1->GetDestRect().y);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 45, 0, "player desW: %i", player1->GetDestRect().w);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 45, 0, "player desH: %i", player1->GetDestRect().h);
 
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 180, 35, 0, "bg coord x: %i", bg->GetCoordX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 270, 35, 0, "bg bomapx x: %i", bg->GetMapSize()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "bg coord x: %i", bg->GetCoordX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "bg bomapx x: %i", bg->GetMapSize()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "bg blockrect y: %i", bg->GetBlockRect().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %i", bg->GetDestRect().y); 
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 180, 45, 0, "Scrolling: %s\n", player1->GetIsScrolling()?"true":"false"); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Scrolling: %s\n", player1->GetIsScrolling()?"true":"false"); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 80, 5, 0, player1->GetDebugPlayerMov()); 
 
 
 }
 
 
-void initializeGameEngine ()
+void game::initializeGameEngine ()
 {
 	//==============================================
 	//ALLEGRO INIT FUNCTIONS
@@ -149,7 +161,7 @@ void initializeGameEngine ()
 		std::cout<<"loaded bg image"<<std::endl;
 	}
 
-	bg = new background(tileSheet,"map.map", bgImage);
+	bg = new background(tileSheet,"map/map.map", bgImage);
 	objects.push_back(bg);
 
 	player1 = new player(playerImage);
@@ -172,7 +184,7 @@ void initializeGameEngine ()
 }
 
 
-void shutdownGameEngine()
+void game::shutdownGameEngine()
 {
 	//==============================================
 	//DESTROY ALLEGRO OBJECTS
@@ -196,7 +208,7 @@ void shutdownGameEngine()
 	//delete input;
 }
 
-void processGameEngine()
+void game::processGameEngine()
 {
 	while(!done){
 		al_wait_for_event(eventQueue, &ev); // tells the eventQueue wait for an input
@@ -266,6 +278,7 @@ void processGameEngine()
 			//LEFT 
 			if(keys[LEFT])
 			{
+				//dir = -1;
 				//background::coord.x= background::velX * background::dirX;
 				player1->MoveLeft(bg->GetMap());
 
@@ -280,6 +293,7 @@ void processGameEngine()
 			//or RIGHT
 			else if(keys[RIGHT])
 			{
+				//dir = 1;
 				player1->MoveRight(bg->GetMap());
 				
 				//what if the player wants to jump while moving?
@@ -298,11 +312,13 @@ void processGameEngine()
 					//what if the player wants move right while jumping?
 					if(keys[RIGHT])
 					{
+						//dir = 1;
 						player1->MoveRight(bg->GetMap());
 					}
 					//what if the player wants move left while jumping?
 					else if(keys[LEFT])
 					{
+						//dir = -1;
 						player1->MoveLeft(bg->GetMap());
 					}
 				}
@@ -311,6 +327,7 @@ void processGameEngine()
 			//or default position
 			else
 			{
+				//dir = 0;
 				player1->ResetAnimation(bg->GetMap());
 			}
 
@@ -352,19 +369,19 @@ void processGameEngine()
 	}//end while done
 }
 
-int main()
-{
-
-	// call our engine initialization function
-	initializeGameEngine();
- 
-	// call our engine process function
-	processGameEngine();
- 
-	// call our engine shutdown function
-	shutdownGameEngine();
- 
-	// terminate the program
-	return 0;
-	
-}
+//int main()
+//{
+//
+//	// call our engine initialization function
+//	initializeGameEngine();
+// 
+//	// call our engine process function
+//	processGameEngine();
+// 
+//	// call our engine shutdown function
+//	shutdownGameEngine();
+// 
+//	// terminate the program
+//	return 0;
+//	
+//}

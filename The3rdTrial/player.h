@@ -9,6 +9,7 @@ class player :
 	ALLEGRO_BITMAP *playerImg;
 	sprite camera;
 	sprite box;
+	sprite destrect;
 	sprite pos;
 	bool ground, jump;
 	bool nc; // non collision
@@ -21,6 +22,7 @@ protected:
 	int velCoordX;
 	int velCoordY;
 	int isScrolling;
+	const char* debugMsg;
 
 public:
 	void Init(ALLEGRO_BITMAP *pImg);
@@ -34,6 +36,7 @@ public:
 	int GetCoordX(){return player::coord.x;}
 	int GetDirX(){return player::dirX;}
 	sprite GetCoord(){return player::coord;}
+	sprite GetDestRect(){return player::destrect;}
 	sprite GetRect(){return player::box;}
 	sprite GetPos(){return player::pos;}
 	sprite GetCamera(){return player::camera;}
@@ -42,6 +45,7 @@ public:
 	bool IsJumping(){return true;}
 	int GetIsScrolling(){return player::isScrolling;}
 	void SetVel(int vel);
+	void setDestRect(sprite dest);
 	void SetXvel(int vel);
 	void SetYvel(int vel);
 	void SetPosXvel(int cVel);
@@ -56,6 +60,7 @@ public:
 	void MoveRight(std::vector<std::vector<int> > themap);
 	void ResetAnimation(std::vector<std::vector<int> > themap);
 	void Move(std::vector<std::vector<int> >& map);
+	const char* GetDebugPlayerMov(){return player::debugMsg;}
 	player(ALLEGRO_BITMAP *pImg);
 	~player(void);
 };

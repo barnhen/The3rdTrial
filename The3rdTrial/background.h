@@ -9,6 +9,8 @@ class background:public base
 	ALLEGRO_BITMAP *bgImg;
 	ALLEGRO_BITMAP *tileImg;
 	sprite camera;
+	sprite blockrect;
+	sprite destrect;
 
 
 public:
@@ -24,6 +26,11 @@ public:
 	int GetXVel(){return background::velX;}
 	int GetCoordX(){return background::coord.x;}
 	int GetDirX(){return background::dirX;}
+
+	sprite GetBlockRect(){return background::blockrect;}
+	sprite GetDestRect(){return background::destrect;}
+	void SetBlockRectY(int y);
+	void SetDestRectY(int y);
 
 	std::vector<std::vector<int> > GetMap(){return map;};
 	//sprite GetRect(){return background::box;}

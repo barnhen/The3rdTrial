@@ -7,5 +7,10 @@ class game
 public:
 	game(void);
 	~game(void);
+	void ShowDebugMode(void);
+	void initializeGameEngine();
+	void shutdownGameEngine();
+	void processGameEngine();
+
 };
 

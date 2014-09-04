@@ -39,8 +39,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\Game Framework\CPP\Visual Studio\Allegro 5\allegro-5.0.10-msvc-11.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Game Framework\CPP\Visual Studio\Allegro 5\allegro-5.0.10-msvc-11.0\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Game Framework\CPP\ALLEGRO\Allegro 5\allegro-5.0.10-msvc-11.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Game Framework\CPP\ALLEGRO\Allegro 5\allegro-5.0.10-msvc-11.0\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -76,6 +76,7 @@
     <ClCompile Include="background.cpp" />
     <ClCompile Include="base.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
