@@ -115,7 +115,8 @@ void background::showmap()
 			{
 				//we calculate the position in the TileSet-1.bmp image
 				blockrect.x = (map[i][j]-1) * tileSize;
-				blockrect.y = 0;
+				//blockrect.y = 0; //original
+				blockrect.y = (map[i][j]-1) * tileSize;
 				blockrect.w = tileSize; 
 				blockrect.h = tileSize;
 
@@ -127,7 +128,9 @@ void background::showmap()
 
 				//destrect = destination rectangle and in the screen (so for example if the camera at 100px position and the tile is at 120px position, we show the tile at 20px position
 				destrect.x = j * tileSize - coord.x;
-				destrect.y = i*50;
+				//destrect.y = i*50; //original
+				destrect.y = i*50 - coord.y;
+				
 				//coord.y =destrect.y;
 
 				//sprite destrect = {
@@ -145,7 +148,8 @@ void background::showmap()
 
 void background::Update(std::vector<std::vector<int> >& map)
 {
-	//background::coord.x += background::velX * background::dirX;
+	//background::coord.x += 1 * 1; // will bmove background x auto
+	//background::coord.y+= 1 * 1; // will bmove background y auto
 	//if (background::coord.x + background::coord.w < 0)
 	//{
 	//	coord.x = 0;

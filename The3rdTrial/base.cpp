@@ -23,6 +23,11 @@ void base::Render()
 }
 
 
+/**
+ *Depreceated
+ *
+ *
+ */
 bool base::collision (sprite* rec1, sprite* rec2)
 {
 	if (rec1->y >= rec2->y + rec2->h)
@@ -49,3 +54,41 @@ bool base::collision (sprite* rec1, sprite* rec2)
 	return true;
 }
 
+/**
+* Determines whether or not this <code>Rectangle</code> and the specified
+* <code>Rectangle</code> intersect. Two rectangles intersect if
+* their intersection is nonempty.
+*
+* @param r the specified <code>Rectangle</code>
+* @return    <code>true</code> if the specified <code>Rectangle</code>
+*            and this <code>Rectangle</code> intersect;
+*            <code>false</code> otherwise.
+*/
+//bool intersects(sprite* s) 
+//{
+//	int tw = this.w;
+//	int th = this.h;
+//	int rw = s.w;
+//	int rh = s.h;
+//        
+//	if (rw <= 0 || rh <= 0 || tw <= 0 || th <= 0) 
+//	{
+//		return false;
+//	}
+//	int tx = this.x;
+//	int ty = this.y;
+//	int rx = s.x;
+//	int ry = s.y;
+//	rw += rx;
+//	rh += ry;
+//	tw += tx;
+//	th += ty;
+//	//      overflow || intersect
+//	return ((rw < rx || rw > tx) &&
+//			(rh < ry || rh > ty) &&
+//			(tw < tx || tw > rx) &&
+//			(th < ty || th > ry));
+//} //end boolean intersects
+//
+//
+//

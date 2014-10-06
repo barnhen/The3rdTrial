@@ -68,6 +68,7 @@
   <ItemGroup>
     <ClInclude Include="background.h" />
     <ClInclude Include="base.h" />
+    <ClInclude Include="camera.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="sprite.h" />
@@ -75,6 +76,7 @@
   <ItemGroup>
     <ClCompile Include="background.cpp" />
     <ClCompile Include="base.cpp" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />

@@ -49,6 +49,8 @@ public:
 	int GetX();
 	int GetY();
 
+	bool intersects(sprite r);
+
 	inline const char * BoolToString(bool b){  return b ? "true" : "false";}
 
 };

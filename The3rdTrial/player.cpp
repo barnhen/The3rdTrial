@@ -161,7 +161,6 @@ void player::Update(std::vector<std::vector<int> >& map)
 			if (player::GetPos().x > (900 - WIDTH/2 - box.w))
 			{
 				player::SetVel(4);
-				/*player::SetCoordXvel(0);*/
 				//std::cout<<"if player::GetPos().x > (900 - WIDTH/2 - box.w)"<<std::endl;
 				debugMsg = "in the middle the player will scroll right 1";
 			}
@@ -170,8 +169,6 @@ void player::Update(std::vector<std::vector<int> >& map)
 				isScrolling = 1; //true
 				player::SetXvel(0); //old 0
 				player::SetCoordXvel(4);
-				//player::coord.x++;
-				//player::coord.x += player::velCamX * player::dirX;; // this is the point which scroll the background
 				//std::cout<<"else player::GetPos().x > (900 - WIDTH/2 - box.w)"<<std::endl;
 				debugMsg = "player moving right while camera is scrolling";
 			}
@@ -196,10 +193,7 @@ void player::Update(std::vector<std::vector<int> >& map)
 			player::SetXvel(0); //old 0
 			player::SetCoordXvel(4);
 			debugMsg = "player moving from the center camera to the left border";
-			//player::coord.x--;
 			//below lies the problem when colling to the left the camera scrolls to right when it is suppoesed to stop
-			//player::coord.x = player::coord.x - player::velX;
-			//player::coord.x += player::velX * player::dirX;
 
 		}
 		// if player is in the most left side of scenario limit and wants to walk right untill the mmiddle of screen
@@ -211,6 +205,12 @@ void player::Update(std::vector<std::vector<int> >& map)
 			debugMsg = "player moving left to border left where camera is not scrolling";
 
 		}
+	}
+
+	if (player::GetPos().x - player::velPosX < 0)
+	{
+		player::pos.x=0; // 0 to absolute pos.
+		player::box.x=0; // 0 to relative pos.
 	}
 	//##################PLAYER MOVING#####################################END##################
 
@@ -236,9 +236,10 @@ void player::Update(std::vector<std::vector<int> >& map)
 				continue;
 			//sprite destrect =  { j * 50 - base::coord.x,i * 50, 50, 50 };
 			destrect.x=j * 50 - base::coord.x;
-			destrect.y=i * 50;
+			destrect.y=i * 50; //original
+			//destrect.y=i * 50 + base::coord.y; //original
 			
-			//al_draw_filled_rectangle(destrect.x, destrect.y,destrect.w,destrect.h, al_map_rgba(255,0,255,100));
+			//al_draw_filled_rectangle(destrect.x, destrect.y,50,50, al_map_rgba(22,0,255,100));
 
 			
 			if (collision(&box, &destrect))
@@ -305,7 +306,7 @@ void player::Update(std::vector<std::vector<int> >& map)
 	//below will make the gravity work on the player. he will fall
 	if (!nc && !jump) // not colliding nor jumping
 	{
-		SetYvel(5);
+		SetYvel(5); //will make gravity to fall the player faster
 		//std::cout<<"not coliding or jumping"<<std::endl;
 		//box.y -= 5;
 	}
@@ -314,8 +315,11 @@ void player::Update(std::vector<std::vector<int> >& map)
 	if (jump && velY < 10)
 	{
 		//SetYvel(velY++);
-		velY+=1;
-		//velCoordY+=1;
+		velY+=1; //will make the jump last
+		//if(velY>=0)
+		//{
+		//	player::coord.y++;
+		//}
 	}
 	else
 	{
@@ -328,11 +332,14 @@ void player::Update(std::vector<std::vector<int> >& map)
 	
 	//####### WILL UPDATE BOX MOVEMENT###############
 	player::box.x += player::velX * player::dirX;
-	//if (!ground)
+	//jumping
+	player::box.y += player::velY; //update makes the player falling according to gravity speed
+		
+	if (!ground)
 	{
-		//jumping
-		player::box.y += player::velY;
 		//player::box.y+=4;
+		//player::coord.y += player::velY; // this point will scroll the map
+		//player::coord.y--; // this point will scroll the map
 	}
 	
 	//####### WILL UPDATE ABSOLUTE MAP COORDINATES###############
@@ -344,7 +351,7 @@ void player::Update(std::vector<std::vector<int> >& map)
 	}
 	if (!ground)
 	{
-		//player::coord.y += velCoordX * -1;
+		//player::coord.y += velCoordX;
 		/*background bg*/;
 		//int bgCoord = bg.GetDestRect().y;
 		//bgCoord +=1;
