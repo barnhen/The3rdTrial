@@ -1,9 +1,9 @@
-#include "game.h"
+#include "Game.h"
 
 
-std::list<base *> objects;
-std::list<base *>::iterator iter;
-sprite base::coord;
+std::list<GameObject *> objects;
+std::list<GameObject *>::iterator iter;
+Rect GameObject::coord;
 bool keys[] = {false, false, false, false, false, false,false};
 enum KEYS{UP, DOWN, LEFT, RIGHT, SPACE, C,E};
 //bool keyHold = false;
@@ -17,7 +17,7 @@ enum KEYS{UP, DOWN, LEFT, RIGHT, SPACE, C,E};
 bool done = false;
 bool render = false;
 
-float gameTime = 0;
+float GameTime = 0;
 int frames = 0;
 int gameFPS = 0;
 const int FPS = 60;
@@ -33,7 +33,7 @@ ALLEGRO_BITMAP *image = NULL;
 ALLEGRO_FONT *font18 = NULL;
 ALLEGRO_FONT *font11 = NULL;
 ALLEGRO_BITMAP *bgImage = NULL;
-ALLEGRO_BITMAP *playerImage = NULL;
+ALLEGRO_BITMAP *PlayerImage = NULL;
 ALLEGRO_BITMAP *tileSheet=NULL;
 ALLEGRO_EVENT ev;
 
@@ -41,53 +41,57 @@ ALLEGRO_EVENT ev;
 //==============================================
 //PROJECT VARIABLES
 //==============================================
-background *bg;
-player *player1; 
+World *bg;
+Player *player1; 
+Camera *cam;
 
-game::game(void)
+Game::Game(void)
 {
 }
 
 
-game::~game(void)
+Game::~Game(void)
 {
 
 }
 
-void game::ShowDebugMode(void)
+void Game::showDebugMode(void)
 {
 	//al_init_font_addon();
 	//al_init_ttf_addon();
-	al_draw_textf(font18, al_map_rgb(255, 255, 0), 5, 5, 0, "FPS: %i", gameFPS); // display game FPS on screen
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "player x vel: %i", player1->GetXVel()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 25, 0, "player dirX: %i", player1->GetDirX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "player posX: %i", player1->GetPos().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 35, 0, "player posY: %i", player1->GetPos().y); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 35, 0, "player box x: %i", player1->GetRect().x);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "player box y: %i", player1->GetRect().y);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 35, 0, "player cam x: %i", player1->GetCamera().x);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 500, 35, 0, "player y vel: %i", player1->GetYVel());
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 600, 35, 0, "player y vel: %i", player1->GetYVel());
+	al_draw_textf(font18, al_map_rgb(255, 255, 0), 5, 5, 0, "FPS: %i", gameFPS); // display Game FPS on screen
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "Player x vel: %i", player1->getXVel()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 25, 0, "Player dirX: %i", player1->getDirX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "Player posX: %i", player1->getPos().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 35, 0, "Player posY: %i", player1->getPos().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 35, 0, "Player box x: %i", player1->getRect().x);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "Player box y: %i", player1->getRect().y);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 35, 0, "Player cam x: %i", player1->getCamera().x);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 500, 35, 0, "Player y vel: %i", player1->getYVel());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 600, 35, 0, "Player y vel: %i", player1->getYVel());
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 45, 0, "player desX: %i", player1->GetDestRect().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 45, 0, "player desY: %i", player1->GetDestRect().y);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 45, 0, "player desW: %i", player1->GetDestRect().w);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 45, 0, "player desH: %i", player1->GetDestRect().h);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 45, 0, "Player desX: %i", player1->getDestRect().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 45, 0, "Player desY: %i", player1->getDestRect().y);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 45, 0, "Player desW: %i", player1->getDestRect().w);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 45, 0, "Player desH: %i", player1->getDestRect().h);
 
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "bg coord x: %i", bg->GetCoordX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "bg bomapx x: %i", bg->GetMapSize()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "bg blockrect y: %i", bg->GetBlockRect().y); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %i", bg->GetDestRect().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "bg coord x: %i", bg->getCoordX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "bg bomapx x: %i", bg->getMapSize()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "bg blockrect y: %i", bg->getBlockRect().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %i", bg->getDestRect().y); 
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Scrolling: %s\n", player1->GetIsScrolling()?"true":"false"); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 80, 5, 0, player1->GetDebugPlayerMov()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Scrolling: %s\n", player1->getIsScrolling()?"true":"false"); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Camera X: %f\n", cam->getX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 65, 0, "Player coord X: %f\n", player1->getPos()); 
+	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 80, 5, 0, player1->getDebugPlayerMov()); 
+
 
 
 }
 
 
-void game::initializeGameEngine ()
+void Game::initializeGameEngine ()
 {
 	//==============================================
 	//ALLEGRO INIT FUNCTIONS
@@ -132,14 +136,6 @@ void game::initializeGameEngine ()
 	}
 
 
-	if(!font18)
-	{
-		std::cout<<"failed to load font 18"<<std::endl;
-	}
-	else
-	{
-		std::cout<<"loaded font 18"<<std::endl;
-	}
 
 	bgImage = al_load_bitmap("image\\background.png");
 	if(!bgImage){
@@ -150,9 +146,9 @@ void game::initializeGameEngine ()
 		std::cout<<"loaded bg image"<<std::endl;
 	}
 
-	playerImage = NULL;
+	PlayerImage = NULL;
 
-	tileSheet = al_load_bitmap("image\\TileSet-1.fw.png");//background.png TileSet-1.fw.png
+	tileSheet = al_load_bitmap("image\\TileSet-1.fw.png");//World.png TileSet-1.fw.png
 	if(!tileSheet){
 		std::cout<<"Couldn't load tile image"<<std::endl;
 	}
@@ -161,11 +157,17 @@ void game::initializeGameEngine ()
 		std::cout<<"loaded bg image"<<std::endl;
 	}
 
-	bg = new background(tileSheet,"map/map.map", bgImage);
-	objects.push_back(bg);
+	bg = new World(tileSheet,"map/map.map", bgImage);
+	std::cout<<"stage loaded"<<std::endl;
+	//objects.push_back(bg);
 
-	player1 = new player(playerImage);
+	player1 = new Player(PlayerImage);
+	std::cout<<"Player loaded"<<std::endl;
 	objects.push_back(player1);
+
+	cam = new Camera(0,0);
+	std::cout<<"Camera loaded"<<std::endl;
+
 
 	eventQueue = al_create_event_queue();
 	std::cout<<"eventQueue created"<<std::endl;
@@ -184,7 +186,7 @@ void game::initializeGameEngine ()
 }
 
 
-void game::shutdownGameEngine()
+void Game::shutdownGameEngine()
 {
 	//==============================================
 	//DESTROY ALLEGRO OBJECTS
@@ -199,7 +201,7 @@ void game::shutdownGameEngine()
 	al_destroy_bitmap(image);
 	al_destroy_bitmap(bgImage);
 	al_destroy_bitmap(tileSheet);
-	al_destroy_bitmap(playerImage);
+	al_destroy_bitmap(PlayerImage);
 	al_destroy_font(font18);
 	al_destroy_font(font11);
 	al_destroy_event_queue(eventQueue);
@@ -208,7 +210,7 @@ void game::shutdownGameEngine()
 	//delete input;
 }
 
-void game::processGameEngine()
+void Game::processGameEngine()
 {
 	while(!done){
 		al_wait_for_event(eventQueue, &ev); // tells the eventQueue wait for an input
@@ -261,16 +263,16 @@ void game::processGameEngine()
 		}
 
 		//==============================================
-		//GAME UPDATE
+		//Game UPDATE
 		//==============================================		
 		else if (ev.type == ALLEGRO_EVENT_TIMER){
 			render=true;
 
 			//UPDATE FPS===========
 			frames++;
-			if(al_current_time() - gameTime >= 1)
+			if(al_current_time() - GameTime >= 1)
 			{
-				gameTime = al_current_time();
+				GameTime = al_current_time();
 				gameFPS = frames;
 				frames = 0;
 			}
@@ -279,14 +281,14 @@ void game::processGameEngine()
 			if(keys[LEFT])
 			{
 				//dir = -1;
-				//background::coord.x= background::velX * background::dirX;
-				player1->MoveLeft(bg->GetMap());
+				//World::coord.x= World::velX * World::dirX;
+				player1->moveLeft();
 
-				//what if the player wants to jump while moving?
+				//what if the Player wants to jump while moving?
 				if(keys[SPACE])
 				{
-				if (player1->IsJumpAllowed()){
-					player1->SetJump();
+				if (player1->isJumpAllowed()){
+					player1->setJump();
 					}
 				} //jumping
 			}
@@ -294,32 +296,32 @@ void game::processGameEngine()
 			else if(keys[RIGHT])
 			{
 				//dir = 1;
-				player1->MoveRight(bg->GetMap());
+				player1->moveRight();
 				
-				//what if the player wants to jump while moving?
+				//what if the Player wants to jump while moving?
 				if(keys[SPACE])
 				{
-				if (player1->IsJumpAllowed()){
-					player1->SetJump();
+				if (player1->isJumpAllowed()){
+					player1->setJump();
 					} //jumping
 				}
 			}
 			//or jumping
 			else if(keys[SPACE])
 			{
-				if (player1->IsJumpAllowed()){
-					player1->SetJump();
-					//what if the player wants move right while jumping?
+				if (player1->isJumpAllowed()){
+					player1->setJump();
+					//what if the Player wants move right while jumping?
 					if(keys[RIGHT])
 					{
 						//dir = 1;
-						player1->MoveRight(bg->GetMap());
+						player1->moveRight();
 					}
-					//what if the player wants move left while jumping?
+					//what if the Player wants move left while jumping?
 					else if(keys[LEFT])
 					{
 						//dir = -1;
-						player1->MoveLeft(bg->GetMap());
+						player1->moveLeft();
 					}
 				}
 			}
@@ -328,17 +330,19 @@ void game::processGameEngine()
 			else
 			{
 				//dir = 0;
-				player1->ResetAnimation(bg->GetMap());
+				player1->resetAnimation();
 			}
 
-			//bg->Update();
+			bg->update();
+			
 
-
-			for(iter = objects.begin(); iter != objects.end(); ++iter)
-			{
-				(*iter)->Update(bg->GetMap());
-			}
-
+			//for(iter = objects.begin(); iter != objects.end(); ++iter)
+			//{
+			//	(*iter)->Update();
+			//}
+			player1->update(bg->getMap());
+			//player1->update();
+			cam->update();
 
 		}
 
@@ -348,22 +352,22 @@ void game::processGameEngine()
 		if(render && al_is_event_queue_empty(eventQueue))
 		{
 			render = false;
-			//al_draw_textf(font18, al_map_rgb(255, 0, 255), 5, 5, 0, "FPS: %i", gameFPS); // display game FPS on screen
+			//al_draw_textf(font18, al_map_rgb(255, 0, 255), 5, 5, 0, "FPS: %i", gameFPS); // display Game FPS on screen
 
 			
-
+			bg->render();
 			for(iter = objects.begin(); iter != objects.end(); ++iter)
-					(*iter)->Render();
+					(*iter)->render();
 			//al_draw_bitmap_region(image, curFrame * frameWidth,0, frameWidth, frameHeight, x,y,0);
 
 			if (debug)
 			{
-				ShowDebugMode();
+				showDebugMode();
 			}
 			al_flip_display();
 
 		
-			al_clear_to_color(al_map_rgb(0,0,0)); //that prevents the filled rectangle draw imga just like snake style
+			al_clear_to_color(al_map_rgb(0,0,0)); //that prevents the filled Rect draw imga just like snake style
 
 		} //end render
 	}//end while done

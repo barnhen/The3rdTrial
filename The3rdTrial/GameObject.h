@@ -1,0 +1,54 @@
+#pragma once
+#include "Rect.h"
+#include <iostream>
+#include <allegro5\allegro.h>
+#include <allegro5\allegro_image.h>
+#include <allegro5\allegro_font.h>
+#include <allegro5\allegro_ttf.h>
+#include <list>
+#include <allegro5\allegro_primitives.h>
+#include <allegro5\allegro_color.h>
+#include <allegro5\color.h>
+#include <vector>
+
+
+const int WIDTH = 640;
+const int HEIGHT = 480;
+
+/*
+http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-pointer-variable-and-a-reference-variable-in
+Use references in function parameters and return types to define useful and self-documenting interfaces.
+Use pointers to implement algorithms and data structures.
+*/
+class GameObject
+{
+protected:
+	int maxFrame;
+	int curFrame;
+	int frameCount;
+	int frameDelay;
+	int velX;
+	int velY;
+	int dirX;
+	int dirY;
+	//everytime coord is updated by Player object the background if updated
+	static Rect coord;//coord variable, store the absolute coordinate of the screen, so if I go a 1000px it will be a 1000px
+
+	bool collision(Rect* rec1, Rect* rec2);
+
+public:
+	GameObject(void);
+	~GameObject(void);
+
+	//void virtual Update(std::vector<std::vector<int> >& map);
+	void virtual update();
+	void virtual render();
+	int getX();
+	int getY();
+
+	bool intersects(Rect r);
+
+	inline const char * boolToString(bool b){  return b ? "true" : "false";}
+
+};
+

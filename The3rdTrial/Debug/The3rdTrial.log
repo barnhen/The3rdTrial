@@ -1,20 +1,15 @@
-﻿Build started 10/6/2014 12:47:37 PM.
+﻿Build started 10/23/2014 9:01:56 PM.
      1>Project "D:\PROJETO\CPP\ALLEGRO\The3rdTrial\The3rdTrial\The3rdTrial.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt player.cpp
-         player.cpp
-     1>d:\projeto\cpp\allegro\the3rdtrial\the3rdtrial\player.cpp(225): warning C4018: '>' : signed/unsigned mismatch
-     1>d:\projeto\cpp\allegro\the3rdtrial\the3rdtrial\player.cpp(231): warning C4018: '<' : signed/unsigned mismatch
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\PROJETO\CPP\ALLEGRO\The3rdTrial\Debug\The3rdTrial.exe" /INCREMENTAL /NOLOGO "allegro-5.0.10-monolith-md-debug.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\PROJETO\CPP\ALLEGRO\The3rdTrial\Debug\The3rdTrial.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\PROJETO\CPP\ALLEGRO\The3rdTrial\Debug\The3rdTrial.lib" /MACHINE:X86 Debug\background.obj
-         Debug\base.obj
-         Debug\camera.obj
-         Debug\game.obj
-         Debug\main.obj
-         Debug\player.obj
-         The3rdTrial.vcxproj -> D:\PROJETO\CPP\ALLEGRO\The3rdTrial\Debug\The3rdTrial.exe
-     1>Done Building Project "D:\PROJETO\CPP\ALLEGRO\The3rdTrial\The3rdTrial\The3rdTrial.vcxproj" (Build target(s)).
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Camera.cpp Game.cpp Main.cpp
+         Game.cpp
+     1>d:\projeto\cpp\allegro\the3rdtrial\the3rdtrial\game.cpp(345): error C2664: 'Camera::update' : cannot convert parameter 1 from 'Player *' to 'Player &'
+         Camera.cpp
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         Main.cpp
+     1>Done Building Project "D:\PROJETO\CPP\ALLEGRO\The3rdTrial\The3rdTrial\The3rdTrial.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:02.09
+Time Elapsed 00:00:07.03

@@ -1,13 +1,15 @@
 #pragma once
-#include "base.h"
-#include "background.h"
-#include "player.h"
-class game
+#include "GameObject.h"
+#include "World.h"
+#include "Player.h"
+#include "Camera.h"
+
+class Game
 {
 public:
-	game(void);
-	~game(void);
-	void ShowDebugMode(void);
+	Game(void);
+	~Game(void);
+	void showDebugMode(void);
 	void initializeGameEngine();
 	void shutdownGameEngine();
 	void processGameEngine();
