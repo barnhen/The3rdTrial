@@ -20,6 +20,8 @@ http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-poin
 Use references in function parameters and return types to define useful and self-documenting interfaces.
 Use pointers to implement algorithms and data structures.
 */
+
+// will work as an Entity class
 class GameObject
 {
 protected:
@@ -27,8 +29,8 @@ protected:
 	int curFrame;
 	int frameCount;
 	int frameDelay;
-	int velX;
-	int velY;
+	float velX;
+	float velY;
 	int dirX;
 	int dirY;
 	//everytime coord is updated by Player object the background if updated
@@ -43,8 +45,14 @@ public:
 	//void virtual Update(std::vector<std::vector<int> >& map);
 	void virtual update();
 	void virtual render();
-	int getX();
-	int getY();
+	int getX(){return coord.x;}
+	int getY(){return coord.y;}
+
+	static Rect getCoord(){return coord;}
+
+	float getXVel(){return this->velX;}
+	float getYVel(){return this->velY;}
+
 
 	bool intersects(Rect r);
 

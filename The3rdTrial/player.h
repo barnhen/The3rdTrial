@@ -1,9 +1,10 @@
 #pragma once
-#include "GameObject.h"
+#include "Character.h"
 #include "World.h"
-class Player :	public GameObject
+class Player :	public Character
 {
-
+private:
+	
 	Player(Player const&); // the trouble to return object instance
 
 	int tileSize;
@@ -12,7 +13,7 @@ class Player :	public GameObject
 	
 	Rect pos;
 	bool ground, jump;
-	bool nc; // non collision
+	bool nc; // non collision	
 
 protected:
 	Rect box;
@@ -27,22 +28,24 @@ protected:
 	const char* debugMsg;
 
 public:
-	void init(ALLEGRO_BITMAP *pImg);
+	//void init(ALLEGRO_BITMAP *pImg);
 	void update(std::vector<std::vector<int> >& map);
 	//void update();
-	void render();
-	int getXVel(){return Player::velX;}
-	int getYVel(){return Player::velY;}
-	int getPosXVel(){return Player::velPosX;}
-	int getPosYVel(){return Player::velPosY;}
+	void render();	
+	//float getXVel(){return Player::velX;}
+	//float getYVel(){return Player::velY;}
+	float getPosXVel(){return Player::velPosX;}
+	float getPosYVel(){return Player::velPosY;}
 
-	int getCoordX(){return Player::coord.x;}
+	float getCoordX(){return Player::coord.x;}
 	int getDirX(){return Player::dirX;}
 	Rect getCoord(){return Player::coord;}
 	Rect getDestRect(){return Player::destrect;}
 	Rect getRect(){return Player::box;}
 	Rect getPos(){return Player::pos;}
 	Rect getCamera(){return Player::camera;}
+	float getX(){return Player::box.x;}
+	float getY(){return Player::box.y;}
 	bool isJumpAllowed(){return true;}
 	bool isColliding(){return true;}
 	bool isJumping(){return true;}
@@ -70,10 +73,10 @@ public:
 
 	const char* getDebugPlayerMov(){return Player::debugMsg;}
 	Player(ALLEGRO_BITMAP *pImg);
-	Player();
+	//Player();
 	~Player(void);
 
 	//player& GetInstance(){return player();};
-	static Player &getInstance(); // the trouble to return object instance
+	//static Player &getInstance(); // the trouble to return object instance
 };
 

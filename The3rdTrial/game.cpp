@@ -3,9 +3,15 @@
 
 std::list<GameObject *> objects;
 std::list<GameObject *>::iterator iter;
+/*#######################################################################
+  coord is defined outised the header by the "One Definition Rule". 
+  It means that the var created from GameObejct will have tha same value
+  for every class tha can access this var
+  #######################################################################
+ */
 Rect GameObject::coord;
-bool keys[] = {false, false, false, false, false, false,false};
-enum KEYS{UP, DOWN, LEFT, RIGHT, SPACE, C,E};
+//bool keys[] = {false, false, false, false, false, false,false,false};
+//enum KEYS{UP, DOWN, LEFT, RIGHT, SPACE, C,E,P};
 //bool keyHold = false;
 //int dir = 0;
 
@@ -17,11 +23,13 @@ enum KEYS{UP, DOWN, LEFT, RIGHT, SPACE, C,E};
 bool done = false;
 bool render = false;
 
-float GameTime = 0;
+float gameTime = 0;
 int frames = 0;
-int gameFPS = 0;
+//int gameFPS = 0;
 const int FPS = 60;
+double fps = 0.0;
 bool debug = true;
+//state =-1;
 
 //==============================================
 //ALLEGRO VARIABLES
@@ -43,7 +51,7 @@ ALLEGRO_EVENT ev;
 //==============================================
 World *bg;
 Player *player1; 
-Camera *cam;
+Camera cam;
 
 Game::Game(void)
 {
@@ -55,36 +63,57 @@ Game::~Game(void)
 
 }
 
+double Game::calcFPS() {
+	static double old_time = 0.0;
+	double new_time = al_get_time();
+    double delta = new_time - old_time;
+    double gameFPS = 1.0/(delta);
+    old_time = new_time;
+	//UPDATE FPS===========
+	//double gameFPS = 0.0;
+	//frames++;
+	//if(al_current_time() - gameTime >= 1)
+	//{
+	//	gameTime = al_current_time();
+	//	gameFPS = frames;
+	//	frames = 0;
+	//}
+	return gameFPS;
+}
+
 void Game::showDebugMode(void)
 {
 	//al_init_font_addon();
 	//al_init_ttf_addon();
-	al_draw_textf(font18, al_map_rgb(255, 255, 0), 5, 5, 0, "FPS: %i", gameFPS); // display Game FPS on screen
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "Player x vel: %i", player1->getXVel()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 25, 0, "Player dirX: %i", player1->getDirX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "Player posX: %i", player1->getPos().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 35, 0, "Player posY: %i", player1->getPos().y); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 35, 0, "Player box x: %i", player1->getRect().x);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "Player box y: %i", player1->getRect().y);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 35, 0, "Player cam x: %i", player1->getCamera().x);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 500, 35, 0, "Player y vel: %i", player1->getYVel());
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 600, 35, 0, "Player y vel: %i", player1->getYVel());
+	al_draw_textf(font18, al_map_rgb(255, 255, 0), 5, 5, 0, "FPS: ", fps); // display Game FPS on screen
+	al_draw_textf(font18, al_map_rgb(255, 255, 0), 105, 5, 0, "STATE: %d", state); // display state
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "Player x vel: %.2f", player1->getXVel()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 25, 0, "Player dirX: %i", player1->getDirX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 25, 0, "Player posX: %.2f", player1->getPos().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 25, 0, "Player posY: %.2f", player1->getPos().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "Player box x: %.2f", player1->getRect().x);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 35, 0, "Player box y: %.2f", player1->getRect().y);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "Player cam x: %.2f", player1->getCamera().x);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 35, 0, "Player y vel: %.2f", player1->getYVel());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 45, 0, "Player y vel: %.2f", player1->getYVel());
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 45, 0, "Player desX: %i", player1->getDestRect().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 45, 0, "Player desY: %i", player1->getDestRect().y);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 45, 0, "Player desW: %i", player1->getDestRect().w);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 45, 0, "Player desH: %i", player1->getDestRect().h);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 45, 0, "Player desX: %.2f", player1->getDestRect().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 45, 0, "Player desY: %.2f", player1->getDestRect().y);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 45, 0, "Player desW: %.2f", player1->getDestRect().w);
+	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 45, 0, "Player desH: %.2f", player1->getDestRect().h);
 
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "bg coord x: %i", bg->getCoordX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "bg coord x: %2.f", bg->getCoordX()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "bg bomapx x: %i", bg->getMapSize()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "bg blockrect y: %i", bg->getBlockRect().y); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %i", bg->getDestRect().y); 
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Scrolling: %s\n", player1->getIsScrolling()?"true":"false"); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Camera X: %f\n", cam->getX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 65, 0, "Player coord X: %f\n", player1->getPos()); 
-	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 80, 5, 0, player1->getDebugPlayerMov()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Scrolling: %s", player1->getIsScrolling()?"true":"false"); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Camera X: %f", cam.getX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 65, 0, "Player coord X: %f", player1->getPos());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 75, 0, "Player bg start bound: %i", bg->getStartMapBoundaries());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 75, 0, "Player bg end bound: %i", bg->getEndMapBoundaries());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 85, 0, player1->getDebugPlayerMov()); 
 
 
 
@@ -124,6 +153,8 @@ void Game::initializeGameEngine ()
 	//==============================================
 	//PROJECT INIT
 	//==============================================
+	state =-1;
+	isPaused = false;
 	font18 = al_load_font("font\\arial.ttf", 18, 0);
 	font11 = al_load_font("font\\arial.ttf", 11, 0);
 	if(!font18 || !font11)
@@ -163,11 +194,19 @@ void Game::initializeGameEngine ()
 
 	player1 = new Player(PlayerImage);
 	std::cout<<"Player loaded"<<std::endl;
+	//will call the init() method from Character which is superclass of player
+	player1->init();
 	objects.push_back(player1);
 
-	cam = new Camera(0,0);
+	//cam = new Camera(0,0);
+	cam.setSize(WIDTH,HEIGHT);
+	cam.setFocusedCharacter(player1);
 	std::cout<<"Camera loaded"<<std::endl;
 
+	//##################################################################################################
+	// Here will define at what point the program will start at: Tile screen, menu, gameplay, credits...
+	//##################################################################################################
+	changeState(state, GameState::PLAYING);
 
 	eventQueue = al_create_event_queue();
 	std::cout<<"eventQueue created"<<std::endl;
@@ -179,11 +218,8 @@ void Game::initializeGameEngine ()
 
 	al_start_timer(timer);
 
-
-
-
-
 }
+
 
 
 void Game::shutdownGameEngine()
@@ -215,135 +251,91 @@ void Game::processGameEngine()
 	while(!done){
 		al_wait_for_event(eventQueue, &ev); // tells the eventQueue wait for an input
 
-		//key pressed
-		if (ev.type==ALLEGRO_EVENT_KEY_DOWN){
-			switch(ev.keyboard.keycode){
-			case ALLEGRO_KEY_ESCAPE: 
-				done = true;
-				break;
-			case ALLEGRO_KEY_BACKSPACE:
-				done = true;
-				break;
-			case ALLEGRO_KEY_LEFT: 
-				keys[LEFT]=true;
-				break;
-			case ALLEGRO_KEY_RIGHT: 
-				keys[RIGHT]=true;
-				break;
-			case ALLEGRO_KEY_SPACE: 
-				keys[SPACE]=true;
-				break;
-
-			}
-		}
-
-		//key released
-		else if(ev.type == ALLEGRO_EVENT_KEY_UP)
+		//if user closes window then application will shut down
+		if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) 
 		{
-			switch(ev.keyboard.keycode)
-			{
-			case ALLEGRO_KEY_ESCAPE:
 				done = true;
-				break;
-			case ALLEGRO_KEY_BACKSPACE:
-				done = true;
-				break;
-			case ALLEGRO_KEY_LEFT: 
-				keys[LEFT]=false;
-				break;
-			case ALLEGRO_KEY_RIGHT: 
-				keys[RIGHT]=false;
-				break;
-			case ALLEGRO_KEY_SPACE: 
-				keys[SPACE]=false;
-				break;
-
-			}
-
 		}
+
+		if (ev.type == ALLEGRO_EVENT_KEY_DOWN) 
+		{
+			// hitting ESC key also shuts the application.
+			if (ev.keyboard.keycode == ALLEGRO_KEY_ESCAPE) 
+			{
+				done = true;
+			}
+			
+			else if (ev.keyboard.keycode == ALLEGRO_KEY_BACKSPACE) 
+			{
+				done = true;
+			}
+		}
+
+		if (state == GameState::PLAYING)
+		{
+		
+			player1->handleInput(ev);
+
+				if (isPaused)
+				{
+					//al_start_timer(timer);
+					//al_flip_display();
+					isPaused = false;
+				}
+				else
+				{
+					//al_stop_timer(timer);
+					//al_flip_display();
+					isPaused = true;
+				}
+
+		} // if (state == GameState::PLAYING)
 
 		//==============================================
 		//Game UPDATE
 		//==============================================		
-		else if (ev.type == ALLEGRO_EVENT_TIMER){
+		//else if (ev.type == ALLEGRO_EVENT_TIMER){
+		if (ev.type == ALLEGRO_EVENT_TIMER){
 			render=true;
 
-			//UPDATE FPS===========
-			frames++;
-			if(al_current_time() - GameTime >= 1)
-			{
-				GameTime = al_current_time();
-				gameFPS = frames;
-				frames = 0;
-			}
-
-			//LEFT 
-			if(keys[LEFT])
-			{
-				//dir = -1;
-				//World::coord.x= World::velX * World::dirX;
-				player1->moveLeft();
-
-				//what if the Player wants to jump while moving?
-				if(keys[SPACE])
-				{
-				if (player1->isJumpAllowed()){
-					player1->setJump();
-					}
-				} //jumping
-			}
-			//or RIGHT
-			else if(keys[RIGHT])
-			{
-				//dir = 1;
-				player1->moveRight();
-				
-				//what if the Player wants to jump while moving?
-				if(keys[SPACE])
-				{
-				if (player1->isJumpAllowed()){
-					player1->setJump();
-					} //jumping
-				}
-			}
-			//or jumping
-			else if(keys[SPACE])
-			{
-				if (player1->isJumpAllowed()){
-					player1->setJump();
-					//what if the Player wants move right while jumping?
-					if(keys[RIGHT])
-					{
-						//dir = 1;
-						player1->moveRight();
-					}
-					//what if the Player wants move left while jumping?
-					else if(keys[LEFT])
-					{
-						//dir = -1;
-						player1->moveLeft();
-					}
-				}
-			}
-
-			//or default position
-			else
-			{
-				//dir = 0;
-				player1->resetAnimation();
-			}
-
-			bg->update();
-			
-
+			////UPDATE FPS===========
+			//frames++;
+			//if(al_current_time() - gameTime >= 1)
+			//{
+			//	gameTime = al_current_time();
+			//	gameFPS = frames;
+			//	frames = 0;
+			//}
+						
 			//for(iter = objects.begin(); iter != objects.end(); ++iter)
 			//{
 			//	(*iter)->Update();
 			//}
+			bg->update();
 			player1->update(bg->getMap());
 			//player1->update();
-			cam->update();
+			
+			//cam->update(player1);
+			cam.update();
+			Rect cameraPos = cam.getPosition();
+			//
+			Rect cameraFocus;
+			cameraFocus.x = 0.0;
+			cameraFocus.y = 0.0;
 
+			//update camera position and focus (respecting the x and y returned by bg::setMapPos)
+            //bg->setMapPos(cameraPos.x, cameraPos.y);
+			bg->setMapPos(cameraPos.x, cameraPos.y);
+
+			//std::cout<<"cameraPos.x is="<<cameraPos.x<<std::endl;
+			//std::cout<<"cameraPos.y is="<<cameraPos.y<<std::endl;
+			//cameraFocus.x = cameraPos.x + WIDTH/2;
+			//cameraFocus.y = cameraPos.y + HEIGHT/2;
+   //             
+   //         cam.setPosition(cameraPos.x, cameraPos.y);
+   //         cam.setFocus(cameraFocus.x, cameraFocus.y);
+
+			fps = calcFPS();
 		}
 
 		//==============================================
@@ -373,19 +365,37 @@ void Game::processGameEngine()
 	}//end while done
 }
 
-//int main()
-//{
-//
-//	// call our engine initialization function
-//	initializeGameEngine();
-// 
-//	// call our engine process function
-//	processGameEngine();
-// 
-//	// call our engine shutdown function
-//	shutdownGameEngine();
-// 
-//	// terminate the program
-//	return 0;
-//	
-//}
+
+//TODO: To implement
+void Game::changeState(int &state, int newState)
+{
+	//things to do before changing to state to the new value
+	if(state == GameState::TITLE){
+	
+	}
+	else if (state == GameState::PLAYING){
+		//al_stop_sample_instance(songInstance);
+	}
+	else if (state == GameState::LOST){
+	
+	}
+
+	//after that we switch the game state
+	state = newState;
+	
+	// and then we do things with the new state
+	if(state == GameState::TITLE){
+	
+	}
+	else if (state == GameState::PLAYING){
+		//InitShip(ship);
+		//InitBullet(bullets, NUM_BULLETS);
+		//InitComet(comets, NUM_COMETS);
+		//InitExplosions(explosions, NUM_EXPLOSIONS);
+	
+		//al_play_sample_instance(songInstance);
+	}
+	else if (state == GameState::LOST){
+	
+	}
+}

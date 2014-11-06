@@ -1,7 +1,10 @@
 #pragma once
 
-class Gamestate
+class GameState
 {
 public:
-	enum state { MENU ,GAME ,OPTIONS ,PAUSE ,LOADING };	
+	GameState(void);
+	~GameState(void);
+	enum state { TITLE, MENU ,PLAYING ,LOST,OPTIONS ,PAUSE ,LOADING, CREDITS };	
+
 };
