@@ -15,14 +15,17 @@ class Character : public GameObject
 protected:
 	bool keys[MAX_ENUM_LENGHT];
 	float imageW, imageH;
+	float x, y;
+	Rect box;
 	PhysicsComponent* charPhysics;
+	int tileSize;
 public:
 	Character(ALLEGRO_BITMAP *pImg);
 	~Character(void);
 
 	void updatePhysics();
 
-	void init();
+	void init(float x, float y, float width, float height);
 	void handleInput(const ALLEGRO_EVENT& ev); //will handle keyboard events
 	float getWidth(){return imageW;}
 	float getHeight(){return imageH;}

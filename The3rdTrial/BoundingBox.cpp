@@ -10,6 +10,11 @@ BoundingBox::~BoundingBox(void)
 {
 }
 
+void BoundingBox::init(float x,float y,float width,float height)
+{
+
+}
+
 bool BoundingBox::OverlapsWith(BoundingBox& OtherBox)
 {
 	//We don't intersect if...
@@ -31,3 +36,20 @@ bool BoundingBox::OverlapsWith(BoundingBox& OtherBox)
 		return true;
 
 }
+
+
+//bool BoundingBox::valueInRange(int value, int min, int max)
+//{
+//	return (value >= min) && (value <= max);
+//}
+//
+//bool BoundingBox::rectOverlap(Rect A , Rect B)
+//{
+//	bool xOverlap = valueInRange(A.x ,B.x ,B.x + B.w) ||
+//					valueInRange(B.x ,A.x  ,A.x + A.w);
+//
+//	bool yOverlap = valueInRange(A.y ,B.y ,B.y + B.w) ||
+//					valueInRange(B.y ,A.y  ,A.y + A.w);
+//
+//	return xOverlap && yOverlap;
+//}

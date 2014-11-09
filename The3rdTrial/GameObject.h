@@ -1,5 +1,6 @@
 #pragma once
 #include "Rect.h"
+#include "BoundingBox.h"
 #include <iostream>
 #include <allegro5\allegro.h>
 #include <allegro5\allegro_image.h>
@@ -35,8 +36,10 @@ protected:
 	int dirY;
 	//everytime coord is updated by Player object the background if updated
 	static Rect coord;//coord variable, store the absolute coordinate of the screen, so if I go a 1000px it will be a 1000px
+	float x,y,height,width;
 
 	bool collision(Rect* rec1, Rect* rec2);
+	BoundingBox boundingBox;
 
 public:
 	GameObject(void);
@@ -45,6 +48,7 @@ public:
 	//void virtual Update(std::vector<std::vector<int> >& map);
 	void virtual update();
 	void virtual render();
+	void init(float x ,float y ,float width, float height);
 	int getX(){return coord.x;}
 	int getY(){return coord.y;}
 
@@ -57,6 +61,11 @@ public:
 	bool intersects(Rect r);
 
 	inline const char * boolToString(bool b){  return b ? "true" : "false";}
+
+	bool valueInRange(int value, int min, int max);
+	bool rectOverlap(Rect A , Rect B);
+	bool rectTouch(Rect A , Rect B);
+
 
 };
 

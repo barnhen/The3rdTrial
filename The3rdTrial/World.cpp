@@ -3,25 +3,25 @@
 int World::start;
 unsigned int World::end;
 
-World::World(ALLEGRO_BITMAP *bgSheet, char* filename, ALLEGRO_BITMAP *bgImage)
-{
+//World::World(ALLEGRO_BITMAP *bgSheet, char* filename, ALLEGRO_BITMAP *bgImage)
+//{
 	//tileSize = 50;
 	//coord.x =  0;
 	//coord.y = 0;
 	//coord.w = WIDTH;
 	//coord.h = HEIGHT;
 
-	bgImg = bgImage;
-	tileImg = bgSheet;
-	loadmap(filename);
-	box.x = box.y = 80;
-	box.w = WIDTH;
-	box.h = HEIGHT;
+	//tile.x = tile.y = 80;
+	//tile.w = WIDTH;
+	//tile.h = HEIGHT;
 
-}
+//}
 
 World::World(void)
 {
+	tileSheet=NULL;
+	tile.w = tileSize;
+	tile.h = tileSize;
 }
 
 World::~World(void)
@@ -50,12 +50,37 @@ void World::setMapPos(float& x, float& y)
 }
 
 
-void World::loadmap(const char* filename)
+bool World::loadmap(const char* filename)
 {
+	//bgImg = bgImage;
+	//tileImg = bgSheet;
+
+	bgImg = al_load_bitmap("image\\background.png");
+	if(!bgImg){
+		std::cout<<"Couldn't load background image"<<std::endl;
+	}
+	else
+	{
+		std::cout<<"loaded bg image"<<std::endl;
+	}
+
+	tileSheet = al_load_bitmap("image\\TileSet-1.fw.png");//World.png TileSet-1.fw.png
+	if(!tileSheet){
+		std::cout<<"Couldn't load tile image"<<std::endl;
+		return false;
+	}
+	else
+	{
+		std::cout<<"loaded tileset image"<<std::endl;
+	}
+
+	//loadmap(filename);
+
 	std::ifstream in (filename);
 	if(!in.is_open())
 	{
 		std::cout<<"Problem loading the file"<<std::endl;
+		return false;
 	}
 
 	int mapWidth,mapHeight;
@@ -88,25 +113,25 @@ void World::loadmap(const char* filename)
 			if(in.eof())
 			{
 				std::cout<<"File end has reached too soon"<<std::endl;
-				return;
+				return false;
 			}
 			
 			in >> current;
-			//if (current == -1)
-			//{
+			if (current == -1)
+			{
 			//	enemies.push_back(new enemy(ene, j* 50, i * 50, 1, 0));
 			//	vec.push_back(0);
-			//}
-			//else
+			}
+			else
 			{
 			//of all elements 1 to 7 tiles types we add every single one detected
 				if (current>=0 && current <=7)
 				{
-		//			if (current == 3)
-		//			{
+					if (current == 3)
+					{
 		//				finish.x = j * 50;
 		//				finish.y = i * 50;
-		//			}
+					}
 					vec.push_back(current);
 				}
 				//or we add the enemy
@@ -122,6 +147,7 @@ void World::loadmap(const char* filename)
 	//std::cout<< finish.x << " " << finish.y << std::endl;
 	//inteiro = 4;
 	std::cout<<"map loaded"<< std::endl;
+	return true;
 }
 
 
@@ -255,8 +281,10 @@ void World::showmap()
 			{
 				//we calculate the position in the TileSet-1.bmp image
 				blockrect.x = (map[i][j]-1) * tileSize;
-				//blockrect.y = 0; //original
-				blockrect.y = (map[i][j]-1) * tileSize;
+				blockrect.y = 0; //original  importante to draw different tileset textures
+				//std::cout<<"blockrect.x="<<blockrect.x<<std::endl;
+
+				//blockrect.y = (map[i][j]-1) * tileSize;
 				blockrect.w = tileSize; 
 				blockrect.h = tileSize;
 
@@ -267,12 +295,12 @@ void World::showmap()
 				//std::cout<<"blockrect.x"<<blockrect.x<<"|blockrect.y"<<blockrect.y<<"|blockrect.w"<<blockrect.w<<"blockrect.h"<<blockrect.h<<std::endl;
 
 				//destrect = destination rectangle and in the screen (so for example if the camera at 100px position and the tile is at 120px position, we show the tile at 20px position
-				destrect.x = j * tileSize - coord.x;
+				destrect.x = j * tileSize - GameObject::coord.x;
 				//destrect.y = i*50; //original
 				destrect.y = i*50 - coord.y;
 
-				//destrect.x = j * tileSize - box.x;
-				//destrect.y = i*50 - box.y;
+				//destrect.x = j * tileSize - tile.x;
+				//destrect.y = i*50 - tile.y;
 
 				//coord.y =destrect.y;
 
@@ -280,7 +308,7 @@ void World::showmap()
 				//						j * tileSize - coord.x, i*50
 				//					};
 				//SDL_BlitSurface(block, &blockrect,screen,&destrect);
-				al_draw_bitmap_region(tileImg, blockrect.x,blockrect.y,blockrect.w,blockrect.h,destrect.x, destrect.y,0); //original
+				al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,blockrect.w,blockrect.h,destrect.x, destrect.y,0); //original
 				//al_flip_display();
 
 			}
@@ -312,6 +340,13 @@ int World::getEndMapBoundaries()
 	return end;
 }
 
+// will modify xVal and yVal variabes from PhysicsComponents i.e currentTileX and currentTileY
+void World::GetCurrentTileValues(float xPos, float yPos, int& xVal, int& yVal)
+{
+	xVal = xPos / tile.w;
+	yVal = yPos / tile.h;
+}
+
 //void background::Update(std::vector<std::vector<int> >& map)
 void World::update()
 {
@@ -329,7 +364,7 @@ void World::render()
 	//will update only background, not foreground
 	al_draw_bitmap_region(bgImg, GameObject::getCoord().x,GameObject::getCoord().y,GameObject::getCoord().w,GameObject::getCoord().h,0,0,0);
 	//al_draw_bitmap_region(bgImg, 0,0,World::coord.w,World::coord.h,0,0,0);
-	//al_draw_bitmap_region(bgImg, box.x,box.y,box.w,box.h,0,0,0);
+	//al_draw_bitmap_region(bgImg, tile.x,tile.y,tile.w,tile.h,0,0,0);
 
 	//will update only tileset, not background
 	showmap();

@@ -7,16 +7,16 @@ private:
 	
 	Player(Player const&); // the trouble to return object instance
 
-	int tileSize;
+	//int tileSize;
 	ALLEGRO_BITMAP *playerImg;
 	Rect camera;
 	
 	Rect pos;
 	bool ground, jump;
 	bool nc; // non collision	
+	float gravity;
 
 protected:
-	Rect box;
 	Rect destrect;
 	int velCamX;
 	int velCamY;

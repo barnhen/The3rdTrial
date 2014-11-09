@@ -42,7 +42,7 @@ ALLEGRO_FONT *font18 = NULL;
 ALLEGRO_FONT *font11 = NULL;
 ALLEGRO_BITMAP *bgImage = NULL;
 ALLEGRO_BITMAP *PlayerImage = NULL;
-ALLEGRO_BITMAP *tileSheet=NULL;
+//ALLEGRO_BITMAP *tileSheet=NULL;
 ALLEGRO_EVENT ev;
 
 
@@ -168,34 +168,42 @@ void Game::initializeGameEngine ()
 
 
 
-	bgImage = al_load_bitmap("image\\background.png");
-	if(!bgImage){
-		std::cout<<"Couldn't load tile image"<<std::endl;
-	}
-	else
-	{
-		std::cout<<"loaded bg image"<<std::endl;
-	}
+	//bgImage = al_load_bitmap("image\\background.png");
+	//if(!bgImage){
+	//	std::cout<<"Couldn't load tile image"<<std::endl;
+	//}
+	//else
+	//{
+	//	std::cout<<"loaded bg image"<<std::endl;
+	//}
 
 	PlayerImage = NULL;
 
-	tileSheet = al_load_bitmap("image\\TileSet-1.fw.png");//World.png TileSet-1.fw.png
-	if(!tileSheet){
-		std::cout<<"Couldn't load tile image"<<std::endl;
-	}
-	else
-	{
-		std::cout<<"loaded bg image"<<std::endl;
-	}
+	//tileSheet = al_load_bitmap("image\\TileSet-1.fw.png");//World.png TileSet-1.fw.png
+	//if(!tileSheet){
+	//	std::cout<<"Couldn't load tile image"<<std::endl;
+	//}
+	//else
+	//{
+	//	std::cout<<"loaded bg image"<<std::endl;
+	//}
 
-	bg = new World(tileSheet,"map/map.map", bgImage);
+	//bg = new World(tileSheet,"map/map.map", bgImage);
+	bg = new World();
+	if (!bg->loadmap("map/map.map"))
+	{
+		std::cout << "error loading map" << std::endl;
+        std::exit(1);
+	}
 	std::cout<<"stage loaded"<<std::endl;
 	//objects.push_back(bg);
 
 	player1 = new Player(PlayerImage);
 	std::cout<<"Player loaded"<<std::endl;
 	//will call the init() method from Character which is superclass of player
-	player1->init();
+	//player1->init();
+	player1->init(380,0,50,50); //starting x,y, width an height
+
 	objects.push_back(player1);
 
 	//cam = new Camera(0,0);
@@ -236,7 +244,7 @@ void Game::shutdownGameEngine()
 
 	al_destroy_bitmap(image);
 	al_destroy_bitmap(bgImage);
-	al_destroy_bitmap(tileSheet);
+	//al_destroy_bitmap(tileSheet);
 	al_destroy_bitmap(PlayerImage);
 	al_destroy_font(font18);
 	al_destroy_font(font11);

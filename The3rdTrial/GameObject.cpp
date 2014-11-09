@@ -10,6 +10,19 @@ GameObject::~GameObject(void)
 {
 }
 
+void GameObject::init(float x ,float y ,float width, float height)
+{
+	x = 0;
+	y = 0;
+	height = 0;
+	width = 0;
+	dirX = 0;
+	dirY = 0;
+	boundingBox.init(x,y,width,height);
+
+}
+
+
 void GameObject::update()
 {
 	//rectangle.x += velX * dirX;
@@ -52,6 +65,37 @@ bool GameObject::collision (Rect* rec1, Rect* rec2)
 		return false;
 	}
 	return true;
+}
+
+bool GameObject::valueInRange(int value, int min, int max)
+{
+	return (value >= min) && (value <= max);
+}
+
+bool GameObject::rectOverlap(Rect A , Rect B)
+{
+	if(A.x < B.x + B.w && 
+	   A.x + A.w > B.x &&
+	   A.y < B.y + B.h &&
+	   A.y + A.h > B.y)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool GameObject::rectTouch(Rect A , Rect B)
+{
+	bool xOverlap = valueInRange(A.x ,B.x ,B.x + B.w) ||
+					valueInRange(B.x ,A.x  ,A.x + A.w);
+
+	bool yOverlap = valueInRange(A.y ,B.y ,B.y + B.w) ||
+					valueInRange(B.y ,A.y  ,A.y + A.w);
+
+	return xOverlap && yOverlap;
 }
 
 /**

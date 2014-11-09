@@ -13,7 +13,7 @@ bool isMoving = false;
 Player::Player(ALLEGRO_BITMAP *pImg) : Character (pImg)
 {
 	playerImg = pImg;
-	Player::tileSize =50;
+	/*Player::tileSize =50;*/
 	isScrolling = 0; // false
 	//coord.x = 80; // Player starting x position
 	//coord.y = 0;
@@ -25,10 +25,10 @@ Player::Player(ALLEGRO_BITMAP *pImg) : Character (pImg)
 	destrect.w=50;
 	destrect.h=50;
 
-	box.x = 80; // Player starting x position
-	box.y = 0;
-	box.w = this->tileSize;
-	box.h = this->tileSize;
+	Character::box.x = 80; // Player starting x position
+	Character::box.y = 0;
+	Character::box.w = this->tileSize;
+	Character::box.h = this->tileSize;
 
 	camera.x = 80; // Player starting x position
 	camera.y = 0;
@@ -80,8 +80,8 @@ Player::~Player(void)
 
 void Player::render()
 {
-	al_draw_filled_rectangle(Player::box.x, Player::box.y,Player::box.x + Player::box.w ,Player::box.y + Player::box.h, al_map_rgba(255,0,255,100));
-	//al_draw_filled_rectangle(GameObject::getCoord().x, GameObject::getCoord().y,GameObject::getCoord().x + Player::box.w ,GameObject::getCoord().y + Player::box.h, al_map_rgba(255,0,255,100));
+	al_draw_filled_rectangle(Character::box.x, Character::box.y,Character::box.x + Character::box.w ,Character::box.y + Character::box.h, al_map_rgba(255,0,255,100));
+	//al_draw_filled_rectangle(GameObject::getCoord().x, GameObject::getCoord().y,GameObject::getCoord().x + Character::box.w ,GameObject::getCoord().y + Character::box.h, al_map_rgba(255,0,255,100));
 
 }
 
@@ -208,30 +208,30 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//if (Player::dirX == 1) // move right
 	//{
 	//	// Player will move from most left part (scenario beginning)) untill the midle of screen
-	//	if (Player::getPos().x <= WIDTH/2 - box.w) // middle of screen minus the frame width to center it -> 640/2 - 50 = 270
+	//	if (Player::getPos().x <= WIDTH/2 -Character::box.w) // middle of screen minus the frame width to center it -> 640/2 - 50 = 270
 	//	{
 	//		//isScrolling = 0;
 			Player::setVel(4);
-	//		//std::cout<<"Player::GetPos().x < WIDTH/2 - box.w"<<std::endl;
+	//		//std::cout<<"Player::GetPos().x < WIDTH/2 -Character::box.w"<<std::endl;
 	//		debugMsg = "moving from most left part (scenario beginning)) untill the midle of screen";
 	//	}
 	//	// if Player is in the most right side of scenario limit and wants to walk left untill the mmiddle of screen
 	//	// because we are skipping n x camera vel to scroll left we have to include the velCamX to condition
-	//	else if(Player::getPos().x >= (900 - WIDTH/2) - box.w)
+	//	else if(Player::getPos().x >= (900 - WIDTH/2) -Character::box.w)
 	//	{
 	//		//isScrolling = 0;
 	//		//std::cout<<"limit right border"<<900 - WIDTH/2<<std::endl;
 	//		Player::setVel(4);
-	//		//std::cout<<"Player::GetPos().x > (900 - WIDTH/2) - box.w"<<std::endl;
+	//		//std::cout<<"Player::GetPos().x > (900 - WIDTH/2) -Character::box.w"<<std::endl;
 	//		debugMsg = "if Player is in the most right side of scenario limit and wants to walk left untill the mmiddle of screen";
 	//	}
 	//	// in the middle the Player will scroll right
 	//	else
 	//	{
-	//		if (Player::getPos().x > (900 - WIDTH/2 - box.w))
+	//		if (Player::getPos().x > (900 - WIDTH/2 -Character::box.w))
 	//		{
 	//			Player::setVel(4);
-	//			//std::cout<<"if Player::GetPos().x > (900 - WIDTH/2 - box.w)"<<std::endl;
+	//			//std::cout<<"if Player::GetPos().x > (900 - WIDTH/2 -Character::box.w)"<<std::endl;
 	//			debugMsg = "in the middle the Player will scroll right 1";
 	//		}
 	//		else
@@ -239,7 +239,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//			//isScrolling = 1; //true
 	//			Player::setXvel(0); //old 0
 	//			Player::setCoordXvel(4);
-	//			//std::cout<<"else Player::GetPos().x > (900 - WIDTH/2 - box.w)"<<std::endl;
+	//			//std::cout<<"else Player::GetPos().x > (900 - WIDTH/2 -Character::box.w)"<<std::endl;
 	//			debugMsg = "Player moving right while camera is scrolling";
 	//		}
 	//	}
@@ -249,7 +249,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//{
 	//	// if Player is in the most right side of scenario limit and wants to walk left untill the mmiddle of screen
 	//	// because we are skippn n x camera vel to scroll left we have to include the velCamX to condition
-	//	if(Player::getPos().x - Player::velPosX > (900 - WIDTH/2) - box.w)
+	//	if(Player::getPos().x - Player::velPosX > (900 - WIDTH/2) -Character::box.w)
 	//	{
 	//		//isScrolling = 0;
 	//		//std::cout<<"limit right <left> border"<<900 - WIDTH/2<<std::endl;
@@ -257,7 +257,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//		debugMsg = "Player moving from right border to left where camera is not scrolling";
 	//	}
 	//	// because we are skippn n x camera vel to scroll left we have to include the velCamX to condition
-	//	else if (Player::getPos().x - Player::velPosX > WIDTH/2 - box.w)
+	//	else if (Player::getPos().x - Player::velPosX > WIDTH/2 -Character::box.w)
 	//	{
 	//		//isScrolling = 1;
 	//		Player::setXvel(0); //old 0
@@ -280,7 +280,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//if (Player::getPos().x - Player::velPosX < 0)
 	//{
 	//	Player::pos.x=0; // 0 to absolute pos.
-	//	//Player::box.x=0; // 0 to relative pos.
+	//	//Character::box.x=0; // 0 to relative pos.
 	//}
 	////##################Player MOVING#####################################END##################
 
@@ -328,32 +328,33 @@ void Player::update(std::vector<std::vector<int> >& map)
 			destrect.x=j * 50 - GameObject::coord.x;
 			destrect.y=i * 50; //original
 			
-			if (collision(&box, &destrect))
+			//if (collision(&box, &destrect))
+			if (rectOverlap(box, destrect))
 			{
 				nc = true;
 				setDestRect(destrect);
 				//below condition make the Player hit the ground when he falls by gravity
 				//if (isScrolling == 1) 
 				//{
-					if(destrect.y >= box.y + pos.h - 11)
+					if(destrect.y >=Character::box.y + pos.h)
 					{
 						ground = true;
 						velY= 0 ;
 					}
-					else if (destrect.y + destrect.h <= box.y + 11)
+					else if (destrect.y + destrect.h <=Character::box.y + 150)
 					{
-						Player::box.x = Player::box.x - Player::velX;
+						Character::box.x = Character::box.x - Player::velX;
 						velY = 10; // this will be gravity
 					}
 
-					//horizontal box collision check begin
-					//will stop the Player the pass through box on x direction
+					//horizontalCharacter::box collision check begin
+					//will stop the Player the pass throughCharacter::box on x direction
 					//pushing to left
-					if (box.x + box.w >= destrect.x - 5 && 
-						box.y + box.h >= destrect.y + 6 && 
-						box.x + box.w <= destrect.x +20)
+					if (Character::box.x + Character::box.w >= destrect.x - 5 && 
+						Character::box.y + Character::box.h >= destrect.y + 6 && 
+						Character::box.x + Character::box.w <= destrect.x +20)
 					{
-						Player::box.x = Player::box.x - Player::velX; // we stop the Player from moving to right
+						Character::box.x = Character::box.x - Player::velX; // we stop the Player from moving to right
 						Player::pos.x = Player::pos.x - Player::velPosX; // we stop the posx of Player from increasing
 
 						//if (isScrolling == 1) {Player::coord.x = Player::coord.x - Player::velPosX;std::cout<<"pushing left col"<<std::endl;}
@@ -364,10 +365,10 @@ void Player::update(std::vector<std::vector<int> >& map)
 
 					}
 					//pushing to right
-					else if (box.x - box.w <= destrect.x + destrect.w &&
-							 box.y + box.h >= destrect.y + 6)
+					else if (Character::box.x -Character::box.w <= destrect.x + destrect.w &&
+							Character::box.y +Character::box.h >= destrect.y + 6)
 					{
-						Player::box.x = Player::box.x + Player::velX; // we stop the Player from moving to left
+						Character::box.x = Character::box.x + Player::velX; // we stop the Player from moving to left
 						Player::pos.x = Player::pos.x + Player::velPosX; // we stop the posx of Player from decreasing
 
 						//if (isScrolling == 1) 
@@ -378,7 +379,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 						std::cout<<"pushing right|X coord="<<pos.x<<"|y coord="<<box.y<<"|destrect x="<<destrect.x<<"|destrect.y="<<destrect.y<<std::endl;
 
 					}
-					//horizontal box collision check end
+					//horizontalCharacter::box collision check end
 				//} // end if isScrolling
 			}// end if collision(&box, &destrect)
 		} //end for j < end
@@ -408,15 +409,15 @@ void Player::update(std::vector<std::vector<int> >& map)
 
 	////####################GRAVITY AND COLICION WITH BG TILES#################END###################
 	//
-	////####### WILL UPDATE BOX MOVEMENT###############
-	Player::box.x += Player::velX * Player::dirX;
+	////####### WILL UPDATECharacter::box MOVEMENT###############
+	Character::box.x += Player::velX * Player::dirX;
 	//box.x += 4 * Player::dirX;
 	//////jumping
-	Player::box.y += Player::velY; //update makes the Player falling according to gravity speed
+	Character::box.y += Player::velY; //update makes the Player falling according to gravity speed
 	//	
 	//if (!ground)
 	//{
-	//	//Player::box.y+=4;
+	//	//Character::box.y+=4;
 		//Player::coord.y += Player::velY; // this point will scroll the map
 	//	//Player::coord.y--; // this point will scroll the map
 	//}
@@ -426,7 +427,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//{
 		//Player::coord.x += Player::velCoordX * Player::dirX;
 		//Player::coord.x += 4 * Player::dirX;
-		std::cout<<"coord.x is "<<coord.x<<std::endl;
+		//std::cout<<"coord.x is "<<coord.x<<std::endl;
 	//	//std::cout<<"velCoordX is "<<velCoordX<<std::endl;
 	//	//Player::coord.y += Player::velCoordY * Player::dirY;
 
