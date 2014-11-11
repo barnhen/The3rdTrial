@@ -25,12 +25,15 @@ public:
 
 	void updatePhysics();
 
-	void init(float x, float y, float width, float height);
+	void init(float x, float y, float width, float height, float velX, float velY);
 	void handleInput(const ALLEGRO_EVENT& ev); //will handle keyboard events
+
 	float getWidth(){return imageW;}
 	float getHeight(){return imageH;}
 	float getVelX(){return GameObject::velX;}
 	float getVelY(){return GameObject::velY;}
+
+	
 
 };
 

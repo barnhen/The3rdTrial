@@ -4,6 +4,9 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <map>
+
+enum COLLISION_TYPE{COLLIDE_NONE, COLLIDE_SOLID, COLLIDE_PLATFORM, COLLIDE_SLOPE};
 
 class World : public GameObject
 {
@@ -11,7 +14,6 @@ private:
 	//static World* instance;
 	//World(void);
 	//Rect GameObject::coord;
-	static const int tileSize = 50;
 	std::vector<std::vector<int> > map;
 	ALLEGRO_BITMAP *bgImg;
 	ALLEGRO_BITMAP *tileImg;
@@ -20,14 +22,18 @@ private:
 	Rect blockrect;
 	Rect destrect;
 	//World(World const&); // the trouble to return object instance	
-	int inteiro;
 	Rect tile;
 	Rect posMap;
 	//int mapX;
 	//int mapY;
 	static int start;
 	static unsigned int end;
+	//maping of the tiles and their collision type
+	std::map<int,std::string> m_CollisionMap;
+	std::vector<GameObject*> entities;
 
+protected:
+		static const int tileSize = 50;
 public:
 	//World(ALLEGRO_BITMAP *bgSheet, char* filename, ALLEGRO_BITMAP *bgImage);
 	World(void);
@@ -40,10 +46,18 @@ public:
 	void render();
 	//int setStartMapBoundaries(Rect coordBox);
 	//int setEndMapBoundaries(Rect coordBox);
+
+	COLLISION_TYPE collisionLookup(int TileNum); //looks up the COLLISION_TYPE enum using the tile's number
+
+	void setStartMapBoundaries(Rect coordinate);
+	void setEndMapBoundaries(Rect coordinate);
+
+	void addEntity(GameObject gameObject);
+
 	int getStartMapBoundaries();
 	int getEndMapBoundaries();
 	int getMapSize(){return tileSize * map[0].size();}
-	int getTileSize(){return World::tileSize;}
+	static int getTileSize(){return World::tileSize;}
 	float getXVel(){return World::velX;}
 	float getCoordX(){return coord.x;}
 	int getDirX(){return World::dirX;}

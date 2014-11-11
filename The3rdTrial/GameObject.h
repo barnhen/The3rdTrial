@@ -1,5 +1,6 @@
 #pragma once
 #include "Rect.h"
+//#include "World.h"
 #include "BoundingBox.h"
 #include <iostream>
 #include <allegro5\allegro.h>
@@ -40,6 +41,7 @@ protected:
 
 	bool collision(Rect* rec1, Rect* rec2);
 	BoundingBox boundingBox;
+	//World world;
 
 public:
 	GameObject(void);
@@ -48,7 +50,7 @@ public:
 	//void virtual Update(std::vector<std::vector<int> >& map);
 	void virtual update();
 	void virtual render();
-	void init(float x ,float y ,float width, float height);
+	void init(float x ,float y ,float width, float height, float velX, float velY);
 	int getX(){return coord.x;}
 	int getY(){return coord.y;}
 
@@ -58,13 +60,13 @@ public:
 	float getYVel(){return this->velY;}
 
 
-	bool intersects(Rect r);
+	//bool intersects(Rect r);
 
 	inline const char * boolToString(bool b){  return b ? "true" : "false";}
 
-	bool valueInRange(int value, int min, int max);
-	bool rectOverlap(Rect A , Rect B);
-	bool rectTouch(Rect A , Rect B);
+	//bool valueInRange(int value, int min, int max);
+	//bool rectOverlap(Rect A , Rect B);
+	//bool rectTouch(Rect A , Rect B);
 
 
 };

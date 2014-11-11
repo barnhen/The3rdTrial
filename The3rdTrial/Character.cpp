@@ -28,16 +28,18 @@ Character::~Character(void)
 {
 }
 
-void Character::init(float x, float y, float width, float height) {
+void Character::init(float x, float y, float width, float height, float velX, float velY) {
     //if (!loaded) {
     //    loaded = load_frames();
     //    update_bounding_boxes();
 	this->tileSize =50;
 	this->box.x = x;
 	this->box.y = y;
-	this->box.w = imageW = width;
-	this->box.h = imageH = height;
-	GameObject::init(x,y,imageW,imageH);
+	this->box.w = width;
+	this->box.h = height;
+	this->box.vX = velX;
+	this->box.vX = velY;
+	GameObject::init(x,y,imageW,imageH, velX, velY);
 	//bb.set_w(al_get_bitmap_width(f->image));
  //   bb.set_h(al_get_bitmap_height(f->image));
     //}

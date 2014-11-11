@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "World.h"
 
 class PhysicsComponent
 {

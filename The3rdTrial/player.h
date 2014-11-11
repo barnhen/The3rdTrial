@@ -26,6 +26,7 @@ protected:
 	int velCoordY;
 	int isScrolling;
 	const char* debugMsg;
+	const char* debugCollisionMsg;
 
 public:
 	//void init(ALLEGRO_BITMAP *pImg);
@@ -41,11 +42,11 @@ public:
 	int getDirX(){return Player::dirX;}
 	Rect getCoord(){return Player::coord;}
 	Rect getDestRect(){return Player::destrect;}
-	Rect getRect(){return Player::box;}
+	Rect getRect(){return Character::box;}
 	Rect getPos(){return Player::pos;}
 	Rect getCamera(){return Player::camera;}
-	float getX(){return Player::box.x;}
-	float getY(){return Player::box.y;}
+	float getX(){return Character::box.x;}
+	float getY(){return Character::box.y;}
 	bool isJumpAllowed(){return true;}
 	bool isColliding(){return true;}
 	bool isJumping(){return true;}
@@ -59,7 +60,7 @@ public:
 	void setCamXvel(int cVel);
 	void setCamYvel(int cVel);
 	void setCoordXvel(int cVel);
-	void setJump();
+	void letsJump();
 
 
 	//void MoveLeft(std::vector<std::vector<int> > themap);
@@ -72,6 +73,8 @@ public:
 	void move();
 
 	const char* getDebugPlayerMov(){return Player::debugMsg;}
+	const char* getDebugPlayerCollision(){return Player::debugCollisionMsg;}
+	
 	Player(ALLEGRO_BITMAP *pImg);
 	//Player();
 	~Player(void);

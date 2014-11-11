@@ -94,8 +94,8 @@ void Game::showDebugMode(void)
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "Player box x: %.2f", player1->getRect().x);
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 35, 0, "Player box y: %.2f", player1->getRect().y);
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "Player cam x: %.2f", player1->getCamera().x);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 35, 0, "Player y vel: %.2f", player1->getYVel());
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 45, 0, "Player y vel: %.2f", player1->getYVel());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 35, 0, "Player x vel: %.2f", player1->getRect().vX);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 45, 0, "Player y vel: %.2f", player1->getRect().vY);
 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 45, 0, "Player desX: %.2f", player1->getDestRect().x); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 45, 0, "Player desY: %.2f", player1->getDestRect().y);
@@ -114,6 +114,7 @@ void Game::showDebugMode(void)
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 75, 0, "Player bg start bound: %i", bg->getStartMapBoundaries());
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 75, 0, "Player bg end bound: %i", bg->getEndMapBoundaries());
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 85, 0, player1->getDebugPlayerMov()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 85, 0, player1->getDebugPlayerCollision()); 
 
 
 
@@ -202,7 +203,7 @@ void Game::initializeGameEngine ()
 	std::cout<<"Player loaded"<<std::endl;
 	//will call the init() method from Character which is superclass of player
 	//player1->init();
-	player1->init(380,0,50,50); //starting x,y, width an height
+	player1->init(380,0,50,50,0,0); //starting x,y, width, height, vX and vy
 
 	objects.push_back(player1);
 

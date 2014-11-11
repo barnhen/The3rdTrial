@@ -28,6 +28,10 @@ World::~World(void)
 {
 }
 
+void World::addEntity(GameObject gameObject)
+{
+	//entities.push_back(gameObject);
+}
 
 void World::setBlockRectY(int y)
 {
@@ -150,6 +154,42 @@ bool World::loadmap(const char* filename)
 	return true;
 }
 
+//looks up the COLLISION_TYPE enum using the tile's number
+COLLISION_TYPE World::collisionLookup(int TileNum)
+{
+	 std::string collisionName;
+	 COLLISION_TYPE collisionType;
+
+	 //if we find an item with this key
+	 if( m_CollisionMap.count(TileNum) )
+	 {
+		 collisionName = m_CollisionMap[TileNum];
+		
+
+		 if (collisionName.compare("solid") == 0)
+			collisionType = COLLIDE_SOLID;
+		 else if (collisionName.compare("none") == 0)
+			collisionType = COLLIDE_NONE;
+		 else if (collisionName.compare("slope") == 0)
+			 collisionType = COLLIDE_SLOPE;
+		 else if (collisionName.compare("top") == 0)
+			 collisionType = COLLIDE_PLATFORM;
+		  
+		 else
+		 {
+			 //throw std::exception("Can't assign collision type based on map listing.");
+			 collisionType = COLLIDE_NONE;
+			 std::cout<< "Warning!! Couldn't assign an appropriate collide type for " << collisionName.c_str() 
+				 <<	 ". Defaulting to COLLIDE_NONE" << std::endl;
+		 }
+	
+	 }
+	 else
+		 collisionType = COLLIDE_NONE;
+
+	 return collisionType;
+
+} 
 
 //void World::loadmap(const char* filename)
 //{
@@ -260,6 +300,8 @@ void World::showmap()
 	//int end = (coord.x + coord.w + (tileSize - (coord.x + coord.w) % tileSize)) / 50;
 
 	//std::cout<<"coord.x is "<<coord.x<<std::endl;
+	setStartMapBoundaries(GameObject::coord);
+	setEndMapBoundaries(GameObject::coord);
 	unsigned int start = getStartMapBoundaries();
 	unsigned int end = getEndMapBoundaries();
 
@@ -317,26 +359,40 @@ void World::showmap()
 	}
 }
 
-int World::getStartMapBoundaries()
+
+void World::setStartMapBoundaries(Rect coordinate)
 {
-	/*int*/ start = ( GameObject::getCoord().x - ((int)GameObject::getCoord().x % tileSize)) / tileSize;
+	coordinate = GameObject::getCoord();
+		/*int*/ start = ( coordinate.x - ((int)coordinate.x % tileSize)) / tileSize;
 	
 	if (start < 0)
 	{
 		start=0;
 	}
-	return start;
+
 }
 
-int World::getEndMapBoundaries()
+void World::setEndMapBoundaries(Rect coordinate)
 {
-	/*int*/ end = (GameObject::getCoord().x + GameObject::getCoord().w + (tileSize - (int)(GameObject::getCoord().x + GameObject::getCoord().w) % tileSize)) / 50;
+	coordinate = GameObject::getCoord();
+	/*int*/ end = (coordinate.x + coordinate.w + (tileSize - (int)(coordinate.x + coordinate.w) % tileSize)) / 50;
 	
 	if (end > map[0].size())
 	{
 		end = map[0].size();
 	}
 
+
+
+}
+
+int World::getStartMapBoundaries()
+{
+	return start;
+}
+
+int World::getEndMapBoundaries()
+{
 	return end;
 }
 

@@ -1,11 +1,12 @@
 #pragma once
-class Rect
+struct Rect
 {
-public:
 	float x;
 	float y;
 	float w;
 	float h;
+	float vX;
+	float vY;
 	
 	//constructor
 	//Rect(float x, float y): x(x), y(y) {}
