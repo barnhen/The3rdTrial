@@ -106,7 +106,8 @@ void Game::showDebugMode(void)
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "bg coord x: %2.f", bg->getCoordX()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "bg bomapx x: %i", bg->getMapSize()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "bg blockrect y: %i", bg->getBlockRect().y); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %i", bg->getDestRect().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %i", bg->getDestRect().y);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 55, 0, "collision time: %.2f", player1->getCollisionTime());
 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Scrolling: %s", player1->getIsScrolling()?"true":"false"); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Camera X: %f", cam.getX()); 
@@ -203,7 +204,7 @@ void Game::initializeGameEngine ()
 	std::cout<<"Player loaded"<<std::endl;
 	//will call the init() method from Character which is superclass of player
 	//player1->init();
-	player1->init(380,0,50,50,0,0); //starting x,y, width, height, vX and vy
+	player1->init(380,0,40,64,0,0); //starting x,y, width, height, vX and vy
 
 	objects.push_back(player1);
 
@@ -365,6 +366,25 @@ void Game::processGameEngine()
 			{
 				showDebugMode();
 			}
+
+			// Draw the collision rectangles
+			if (player1->isCharBoundingBoxVisible())
+			{
+				//std::cout<<"show bounding box"<<std::endl;
+				//al_draw_filled_rectangle(player1->getCollisionRect().x, player1->getCollisionRect().y,player1->getCollisionRect().x + player1->getCollisionRect().w ,player1->getCollisionRect().y + player1->getCollisionRect().h, al_map_rgba(255,200,255,100));
+				al_draw_filled_rectangle(player1->getTopTileRect().x, player1->getTopTileRect().y,player1->getTopTileRect().x + player1->getTopTileRect().w ,player1->getTopTileRect().y + player1->getTopTileRect().h, al_map_rgba(155,200,255,100));
+				al_draw_filled_rectangle(player1->getBottomTileRect().x, player1->getBottomTileRect().y,player1->getBottomTileRect().x + player1->getBottomTileRect().w ,player1->getBottomTileRect().y + player1->getBottomTileRect().h, al_map_rgba(0,0,255,100));
+				al_draw_filled_rectangle(player1->getMiddleLeftTileRect().x, player1->getMiddleLeftTileRect().y,player1->getMiddleLeftTileRect().x + player1->getMiddleLeftTileRect().w ,player1->getMiddleLeftTileRect().y + player1->getMiddleLeftTileRect().h, al_map_rgba(255,0,0,100));
+				al_draw_filled_rectangle(player1->getMiddleRightTileRect().x, player1->getMiddleRightTileRect().y,player1->getMiddleRightTileRect().x + player1->getMiddleRightTileRect().w ,player1->getMiddleRightTileRect().y + player1->getMiddleRightTileRect().h, al_map_rgb(0,95,0));
+				al_draw_filled_rectangle(bg->getBlockRect().x, bg->getBlockRect().y,bg->getBlockRect().x + bg->getBlockRect().w ,bg->getBlockRect().y + bg->getBlockRect().h, al_map_rgb(95,95,0));
+				//SDL_SetRenderDrawColor(mRenderer, 255, 0, 0, 255);
+				//SDL_RenderFillRect(mRenderer, &mRobot->GetBottomTileRect());
+				//SDL_SetRenderDrawColor(mRenderer, 150, 0, 0, 255);
+				//SDL_RenderFillRect(mRenderer, &mRobot->GetTopTileRect());
+				//SDL_SetRenderDrawColor(mRenderer, 255, 255, 0, 255);
+				//SDL_RenderFillRect(mRenderer, &mRobot->GetCollisonRect());
+			}
+
 			al_flip_display();
 
 		

@@ -14,11 +14,18 @@ class Character : public GameObject
 {
 protected:
 	bool keys[MAX_ENUM_LENGHT];
+	bool visibleBoundingBox;
 	float imageW, imageH;
 	float x, y;
+	float collisionTime;
 	Rect box;
 	PhysicsComponent* charPhysics;
 	int tileSize;
+	Rect topTileRect; // the tile that's directly above the char
+	Rect bottomTileRect; // the tile that's directly below the char
+	Rect middleLeftTileRect; // the tile that's middle left of the char
+	Rect middleRightTileRect; // the tile that's middle right of the char
+	Rect collisionRect; // the tile that's middle right of the char
 public:
 	Character(ALLEGRO_BITMAP *pImg);
 	~Character(void);
@@ -33,6 +40,18 @@ public:
 	float getVelX(){return GameObject::velX;}
 	float getVelY(){return GameObject::velY;}
 
+	float getCollisionTime(){return collisionTime;}
+
+	bool isCharBoundingBoxVisible() {return visibleBoundingBox;}
+
+	void setCollisionRect();
+	void setBoundingBoxes();
+
+	Rect getBottomTileRect() {return bottomTileRect;}
+	Rect getTopTileRect() {return topTileRect;}
+	Rect getMiddleLeftTileRect() {return middleLeftTileRect;}
+	Rect getMiddleRightTileRect() {return middleRightTileRect;}
+	Rect getCollisionRect() {return collisionRect;}
 	
 
 };

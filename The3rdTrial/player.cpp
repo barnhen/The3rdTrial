@@ -29,7 +29,7 @@ Player::Player(ALLEGRO_BITMAP *pImg) : Character (pImg)
 	//Character::box.y = 0;
 	//Character::box.w = this->tileSize;
 	//Character::box.h = this->tileSize;
-	gravity = .175;
+	gravity = .775;
 
 	camera.x = 80; // Player starting x position
 	camera.y = 0;
@@ -52,8 +52,7 @@ Player::Player(ALLEGRO_BITMAP *pImg) : Character (pImg)
 	ground = false;
 	jump = false;
 	nc = false; // non collision
-
-
+	
 }
 
 
@@ -141,6 +140,7 @@ void Player::setPosYvel(int cVel)
 //void Player::update()
 void Player::update(std::vector<std::vector<int> >& map)
 {
+
 	//background bg;
 	//const std::vector<std::vector<int> > map = background::GetInstance().GetMap();
 	//int test = background::GetInstance().GetInt();
@@ -159,9 +159,13 @@ void Player::update(std::vector<std::vector<int> >& map)
 		//what if the Player wants to jump while moving?
 		if(keys[SPACE])
 		{
-		if (isJumpAllowed()){
-			letsJump();
+			if (ground && !jump)
+			{
+				letsJump();
 			}
+			//if (isJumpAllowed()){
+			//}
+			
 		} //jumping
 	}
 	//or RIGHT
@@ -173,15 +177,19 @@ void Player::update(std::vector<std::vector<int> >& map)
 		//what if the Player wants to jump while moving?
 		if(keys[SPACE])
 		{
-		if (isJumpAllowed()){
-			letsJump();
+		//if (isJumpAllowed()){
+			if (ground && !jump)
+			{
+				letsJump();
 			} //jumping
 		}
 	}
 	//or jumping
 	else if(keys[SPACE])
 	{
-		if (isJumpAllowed()){
+		//if (isJumpAllowed())
+		if (ground)
+		{
 			letsJump();
 			//what if the Player wants move right while jumping?
 			if(keys[RIGHT])
@@ -205,6 +213,8 @@ void Player::update(std::vector<std::vector<int> >& map)
 		resetAnimation();
 	}
 
+
+	
 	Character::updatePhysics();
 	//##################Player MOVING#####################################BEGIN##################
 	//if (Player::dirX == 1) // move right
@@ -213,7 +223,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//	if (Player::getPos().x <= WIDTH/2 -Character::box.w) // middle of screen minus the frame width to center it -> 640/2 - 50 = 270
 	//	{
 	//		//isScrolling = 0;
-			Player::setVel(4);
+			//Player::setVel(4);
 	//		//std::cout<<"Player::GetPos().x < WIDTH/2 -Character::box.w"<<std::endl;
 	//		debugMsg = "moving from most left part (scenario beginning)) untill the midle of screen";
 	//	}
@@ -287,6 +297,8 @@ void Player::update(std::vector<std::vector<int> >& map)
 	////##################Player MOVING#####################################END##################
 
 	////####################GRAVITY AND COLICION WITH BG TILES#################BEGIN###################
+	BoundingBox bb;
+
 	int start = ( GameObject::coord.x - ((int)GameObject::coord.x % theBg->getTileSize())) / theBg->getTileSize();
 	int end = (GameObject::coord.x + GameObject::coord.w + (theBg->getTileSize() - (int)(GameObject::coord.x + GameObject::coord.w) % theBg->getTileSize())) / 50;
 
@@ -321,82 +333,11 @@ void Player::update(std::vector<std::vector<int> >& map)
 	}
 	nc = false; // non collision
 
-	for (int i = 0; i < map.size(); i++)
-	{
-		for (int j = start; j < end; j++)
-		{
-			if(map[i][j] == 0)
-				continue;
-			destrect.x=j * 50 - GameObject::coord.x;
-			destrect.y=i * 50; //original
-			BoundingBox bb;
-			//if (collision(&box, &destrect))
-			if (bb.rectOverlap(box, destrect))
-			{
-				nc = true;
-				setDestRect(destrect);
-				//below condition make the Player hit the ground when he falls by gravity
-				//if(destrect.y <= Character::box.y + Character::box.h)
-				if(bb.hasVerticalCollision(box, destrect))
-				{
-					ground = true;
-					box.vY= 0 ;
-					debugCollisionMsg = "ground";
-
-										//horizontalCharacter::box collision check begin
-					//will stop the Player the pass throughCharacter::box on x direction
-					//pushing to left
-					if (Character::box.x + Character::box.w >= destrect.x - 5 && 
-						//Character::box.y + Character::box.h >= destrect.y + 6 && 
-						bb.hasVerticalCollision(box, destrect) &&
-						Character::box.x + Character::box.w <= destrect.x +20)
-					{
-						//Character::box.x = Character::box.x - GameObject::velX; // we stop the Player from moving to right
-						//Player::pos.x = Player::pos.x - Player::velPosX; // we stop the posx of Player from increasing
-
-						//if (isScrolling == 1) {Player::coord.x = Player::coord.x - Player::velPosX;std::cout<<"pushing left col"<<std::endl;}
-					
-						//std::cout<<"pushing left|X coord="<<pos.x<<"|y coord="<<box.y<<"|destrect x="<<destrect.x<<"|destrect.y="<<destrect.y<<std::endl;
-						debugCollisionMsg = "pushing left";
-						//std::cout<<"destrect push right if is "<<destrect.x<<std::endl;
-
-					}
-					//pushing to right
-					else if (Character::box.x -Character::box.w <= destrect.x + destrect.w
-							//&& Character::box.y +Character::box.h >= destrect.y + 6
-							&& bb.hasVerticalCollision(box, destrect)
-							)
-					{
-						//Character::box.x = Character::box.x + GameObject::velX; // we stop the Player from moving to left
-						//Player::pos.x = Player::pos.x + Player::velPosX; // we stop the poskx of Player from decreasing
-
-						//if (isScrolling == 1) 
-						//{Player::coord.x = Player::coord.x + Player::velCoordX;std::cout<<"pushing right col"<<std::endl;}// we stop the posx of Player from increasing
-
-
-					
-						//std::cout<<"pushing right|X coord="<<pos.x<<"|y coord="<<box.y<<"|destrect x="<<destrect.x<<"|destrect.y="<<destrect.y<<std::endl;
-						debugCollisionMsg = "pushing right";
-					}
-						//horizontalCharacter::box collision check end
-
-				}
-				//else if (destrect.y + destrect.h <=Character::box.y + 150)
-				//{
-				//	box.vY = 10; // this will be gravity
-				//}
-
-				//} // end if isScrolling
-			}// end if collision(&box, &destrect)
-		} //end for j < end
-	}// end for map.size()
-	//below will make the gravity work on the Player. he will fall
-	//if (!nc && !jump) // not colliding nor jumping
-
-	// means he is either falling or started falling
-	if (!nc && !jump) // not colliding nor jumping
+		// means he is either falling or started falling
+	if (!jump) // not colliding nor jumping
 	{
 		box.vY = 6.5; //will make gravity to fall the Player faster
+
 		//std::cout<<"not coliding or jumping"<<std::endl;
 		//box.y -= 5;
 
@@ -407,9 +348,167 @@ void Player::update(std::vector<std::vector<int> >& map)
 	}
 	else
 	{
-		jump = false;
+		//jump = false;
 	}
 
+	for (int i = 0; i < map.size(); i++)
+	{
+		for (int j = start; j < end; j++)
+		{
+			if(map[i][j] == 0)
+				continue;
+			destrect.x=j * 50 - GameObject::coord.x;
+			destrect.y=i * 50; 
+			//destrect = bb.getSweptBroadPhaseBox(box);
+			//if (collision(&box, &destrect))
+			if (bb.rectOverlap(box, destrect))
+			{
+				nc = true;
+				setDestRect(destrect);
+				//below condition make the Player hit the ground when he falls by gravity
+				//if(destrect.y <= Character::box.y + Character::box.h)
+				if(bb.hasVerticalCollision(box, destrect))
+				{
+					
+					debugCollisionMsg = "ground";
+					//float normalX, normalY;
+					//float collisionTime = bb.sweptAABB(box, destrect, normalX, normalY);
+					ground = true;
+					if(!jump)
+					{
+						box.vY= 0 ;
+					}
+					
+					//if(bb.hasHorizontalCollision(middleLeftTileRect, destrect)
+					////&& bb.hasVerticalCollision(box, destrect)
+					////&& Character::box.y + Character::box.h >= destrect.y + 6
+					//)
+					//{
+					//	debugCollisionMsg = "horizontal collision";
+					//	Character::collisionTime = 0.0;
+					//}
+					//else
+					//{
+					//	Character::collisionTime = 1.0f;
+					//	debugCollisionMsg = "ground collision";
+					//}
+
+				//####### WILL UPDATECharacter::box MOVEMENT##############
+				}
+				else if(destrect.y + destrect.h <= box.y + 11)
+				{
+					box.vY = 10;
+					debugCollisionMsg = "not vertical collision";
+				} 
+				//else if(bb.hasHorizontalCollision(middleLeftTileRect, destrect)
+				////&& bb.hasVerticalCollision(box, destrect)
+				////&& Character::box.y + Character::box.h >= destrect.y + 6
+				//)
+				//{
+				//	box.vY = 10;
+				//	debugCollisionMsg = "horizontal collision";
+				//	Character::collisionTime = 1;
+				//}
+				//else
+				//{
+				//	box.vY = 10;
+				//	Character::collisionTime = 1;
+				//	debugCollisionMsg = "ground collision";
+				//}
+
+				////####### WILL UPDATECharacter::box MOVEMENT###############
+				//Character::box.x += box.vX * 1;
+				////////jumping
+				//Character::box.y += box.vY * gravity; //update makes the Player falling according to gravity speed
+
+										//horizontalCharacter::box collision check begin
+					//will stop the Player the pass throughCharacter::box on x direction
+					//pushing to left
+				//	if (Character::box.x + Character::box.w >= destrect.x - 5 && 
+				//		//Character::box.y + Character::box.h >= destrect.y + 6 && 
+				//		bb.hasVerticalCollision(box, destrect) &&
+				//		Character::box.x + Character::box.w <= destrect.x +20)
+				//	{
+				//		//Character::box.x = Character::box.x - GameObject::velX; // we stop the Player from moving to right
+				//		//Player::pos.x = Player::pos.x - Player::velPosX; // we stop the posx of Player from increasing
+
+				//		//if (isScrolling == 1) {Player::coord.x = Player::coord.x - Player::velPosX;std::cout<<"pushing left col"<<std::endl;}
+				//	
+				//		//std::cout<<"pushing left|X coord="<<pos.x<<"|y coord="<<box.y<<"|destrect x="<<destrect.x<<"|destrect.y="<<destrect.y<<std::endl;
+				//		//debugCollisionMsg = "pushing left";
+				//		//std::cout<<"destrect push right if is "<<destrect.x<<std::endl;
+
+				//	}
+				//	//pushing to right
+				//	else if (Character::box.x -Character::box.w <= destrect.x + destrect.w
+				//			//&& Character::box.y +Character::box.h >= destrect.y + 6
+				//			&& bb.hasVerticalCollision(box, destrect)
+				//			)
+				//	{
+				//		//Character::box.x = Character::box.x + GameObject::velX; // we stop the Player from moving to left
+				//		//Player::pos.x = Player::pos.x + Player::velPosX; // we stop the poskx of Player from decreasing
+
+				//		//if (isScrolling == 1) 
+				//		//{Player::coord.x = Player::coord.x + Player::velCoordX;std::cout<<"pushing right col"<<std::endl;}// we stop the posx of Player from increasing
+
+
+				//	
+				//		//std::cout<<"pushing right|X coord="<<pos.x<<"|y coord="<<box.y<<"|destrect x="<<destrect.x<<"|destrect.y="<<destrect.y<<std::endl;
+				//		//debugCollisionMsg = "pushing right";
+				//	}
+				//		//horizontalCharacter::box collision check end
+
+				////}
+				////else if (destrect.y + destrect.h <=Character::box.y + 150)
+				////{
+				////	box.vY = 10; // this will be gravity
+				////}
+
+				//} // end if isScrolling
+			}// end if collision(&box, &destrect)
+		} //end for j < end
+	}// end for map.size()
+	//below will make the gravity work on the Player. he will fall
+	//if (!nc && !jump) // not colliding nor jumping
+
+	//// means he is either falling or started falling
+	//if (!nc && !jump) // not colliding nor jumping
+	//{
+	//	box.vY = 6.5; //will make gravity to fall the Player faster
+
+	//	//std::cout<<"not coliding or jumping"<<std::endl;
+	//	//box.y -= 5;
+
+	//	//if(box.vY>=0)
+	//	//{
+	//	//	Player::coord.y++;
+	//	//}
+	//}
+	//else
+	//{
+	//	jump = false;
+	//}
+
+	//if (nc && jump)	jump=false;
+
+	//if(box.vY < -17)
+	//{
+	//	box.vY = -17;
+	//}
+
+	if (!ground)
+	{
+		box.vY+=gravity; //will make the jump last
+	}
+
+	//if (!nc)
+	{
+		Character::box.x += box.vX;
+		Character::box.y += box.vY * gravity; //update makes the Player falling according to gravity speed
+		//debugMsg = "moving int the air";
+	}
+
+	Character::setBoundingBoxes();
 
 	//below will make the Player start falling after jumping and hit the ground again
 	//if (!jump && box.vY < 6.5)
@@ -418,10 +517,10 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//	//box.vY+=1; //will make the jump last
 	//	box.vY = 6.5;
 	//}
-	if (!ground)
-	{
-		box.vY+=gravity; //will make the jump last
-	}
+	//if (!ground)
+	//{
+	//	box.vY+=gravity; //will make the jump last
+	//}
 
 
 	//max vel downword
@@ -432,11 +531,13 @@ void Player::update(std::vector<std::vector<int> >& map)
 
 	////####################GRAVITY AND COLICION WITH BG TILES#################END###################
 	//
-	//####### WILL UPDATECharacter::box MOVEMENT###############
-	Character::box.x += GameObject::velX * Player::dirX;
-	//box.x += 4 * Player::dirX;
-	//////jumping
-	Character::box.y += box.vY; //update makes the Player falling according to gravity speed
+	////####### WILL UPDATECharacter::box MOVEMENT###############
+	//Character::box.x += GameObject::velX * Player::dirX;
+	////box.x += 4 * Player::dirX;
+	////////jumping
+	//Character::box.x += box.vX;
+
+	//Character::box.y += box.vY; //update makes the Player falling according to gravity speed
 	//	
 	//if (!ground)
 	//{
@@ -473,29 +574,58 @@ void Player::update(std::vector<std::vector<int> >& map)
 	////Player::camera.y += Player::velCamY;
 	////Player::camera.y += Player::velY;
 
+	Character::setCollisionRect();
+
+	// Get the tiles that're directly above and beneath the robot's feet
+	//int tileWidth = Character::box.w;
+ //   int tileHeight = Character::box.h;
+	//Character::bottomTileRect.w = Character::topTileRect.w = tileWidth;
+	//Character::bottomTileRect.h = Character::topTileRect.h = tileHeight;
+	//// Get the bottom tile
+	////int row = (Character::getCollisionRect().y + Character::getCollisionRect().h)/tileHeight;
+	////int column = (Character::getCollisionRect().x + Character::getCollisionRect().w/2)/tileWidth;
+	////
+	////Character::bottomTileRect.x = column*tileWidth;
+	////Character::bottomTileRect.y = row*tileHeight;
+	//Character::bottomTileRect.x = Character::box.x;
+	//Character::bottomTileRect.y = Character::box.y;
+
+	//// Get the top tile
+	////row = (Character::getCollisionRect().y)/tileHeight;
+	////column = (Character::getCollisionRect().x + Character::getCollisionRect().w/2)/tileWidth;
+
+	////Character::topTileRect.x = column*tileWidth;
+	////Character::topTileRect.y = row*tileHeight;
+
+	//Character::topTileRect.x = Character::box.x;
+	//Character::topTileRect.y = Character::box.y;
+
+	
+
+
+
+
 
 }
 void Player::moveLeft()
 {
-	Player::dirX = -1;
+	//Player::dirX = -1;
+	Player::box.vX = -4;
 }
 
 void Player::moveRight()
 {
-	Player::dirX =1;
+	//Player::dirX =1;
+	Player::box.vX = 4;
 }
 
 void Player::letsJump()
 {
-	if (ground && !jump)
-	{
-		box.vY = -13.00; //velocity from jumping from ground to mid-air until reaches 0 and it increase from 0 to more until reaches the ground
+		box.vY = -17.00; //velocity from jumping from ground to mid-air until reaches 0 and it increase from 0 to more until reaches the ground
 		jump = true;
 		ground = false;
 		
-		box.y -= 5;
-	}
-	
+		//box.y += box.vY;
 }
 
 void Player::move()
@@ -504,7 +634,8 @@ void Player::move()
 
 void Player::resetAnimation()
 {
-	Player::dirX = 0;
+	//Player::dirX = 0;
+	Player::box.vX = 0;
 	//Player::Move(themap);
 }
 
