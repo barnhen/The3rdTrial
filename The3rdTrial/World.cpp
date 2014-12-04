@@ -20,8 +20,8 @@ unsigned int World::end;
 World::World(void)
 {
 	tileSheet=NULL;
-	tile.w = tileSize;
-	tile.h = tileSize;
+	//tile.w = tileSize;
+	//tile.h = tileSize;
 }
 
 World::~World(void)
@@ -47,10 +47,10 @@ void World::setMapPos(float& x, float& y)
 {
 	//coord.x = x;
 	//coord.y = y;
-	coord.x = 0;
-	coord.y = 0;
-	coord.w = WIDTH;
-	coord.h = HEIGHT;
+	//coord.x = 0;
+	//coord.y = 0;
+	//coord.w = WIDTH;
+	//coord.h = HEIGHT;
 }
 
 
@@ -78,6 +78,18 @@ bool World::loadmap(const char* filename)
 		std::cout<<"loaded tileset image"<<std::endl;
 	}
 
+	//for(int i = 0; i < size; i++)
+	//{
+	//	tile[i].ID = BRICK;
+	//	bricks[i].level = 0;
+	//	bricks[i].size = 0;
+	//	bricks[i].timer = 0;
+	//	bricks[i].x = 0;
+	//	bricks[i].xstart = 0;
+	//	bricks[i].y = 0;
+	//	bricks[i].ystart = 0;
+	//}
+
 	//loadmap(filename);
 
 	std::ifstream in (filename);
@@ -87,10 +99,11 @@ bool World::loadmap(const char* filename)
 		return false;
 	}
 
-	int mapWidth,mapHeight;
+	
 	in >> mapWidth;
 	in >> mapHeight;
 	
+
 	//std::string line;
 	//std::vector<std::string> lines;
 	//while (std::getline(in, line))
@@ -152,6 +165,14 @@ bool World::loadmap(const char* filename)
 	//inteiro = 4;
 	std::cout<<"map loaded"<< std::endl;
 	return true;
+}
+
+
+void World::checkCollisionWith(Character *character) {
+    if (character == NULL) return;
+    //for (unsigned int i = 0; i < cells.size(); ++i) {
+    //    c->handle_collision(cells[i]);
+    //}
 }
 
 //looks up the COLLISION_TYPE enum using the tile's number
@@ -292,7 +313,10 @@ COLLISION_TYPE World::collisionLookup(int TileNum)
 //}
 //
 
-
+void World::addPlayer(Player *p)
+{
+	this->player =p;
+}
 
 void World::showmap()
 {
@@ -300,10 +324,10 @@ void World::showmap()
 	//int end = (coord.x + coord.w + (tileSize - (coord.x + coord.w) % tileSize)) / 50;
 
 	//std::cout<<"coord.x is "<<coord.x<<std::endl;
-	setStartMapBoundaries(GameObject::coord);
-	setEndMapBoundaries(GameObject::coord);
-	unsigned int start = getStartMapBoundaries();
-	unsigned int end = getEndMapBoundaries();
+	//setStartMapBoundaries(GameObject::getCoord());
+	//setEndMapBoundaries(GameObject::getCoord());
+	//unsigned int start = getStartMapBoundaries();
+	//unsigned int end = getEndMapBoundaries();
 
 
 	//if (start < 0)
@@ -315,15 +339,23 @@ void World::showmap()
 	//	end = map[0].size();
 	//}
 
-	for (unsigned int i = 0; i < map.size(); i++)
+	//int tileSetWidth = al_get_bitmap_width(filename) / tileSize;
+
+	//for (unsigned int i = 0; i < map.size(); i++)
+	//{
+	//	for (unsigned int j = 0; j < mapHeight; j++)
+	//Player *player;
+	for (unsigned int i = 0; i < mapHeight; i++)
 	{
-		for (unsigned int j = 0; j < end; j++)
+		for (unsigned int j = 0; j < mapWidth; j++)
 		{
 			if (map[i][j] !=0)
 			{
 				//we calculate the position in the TileSet-1.bmp image
 				blockrect.x = (map[i][j]-1) * tileSize;
-				blockrect.y = 0; //original  importante to draw different tileset textures
+				blockrect.y = 0; //original  important to draw different tileset textures
+
+				//int tX
 				//std::cout<<"blockrect.x="<<blockrect.x<<std::endl;
 
 				//blockrect.y = (map[i][j]-1) * tileSize;
@@ -337,9 +369,10 @@ void World::showmap()
 				//std::cout<<"blockrect.x"<<blockrect.x<<"|blockrect.y"<<blockrect.y<<"|blockrect.w"<<blockrect.w<<"blockrect.h"<<blockrect.h<<std::endl;
 
 				//destrect = destination rectangle and in the screen (so for example if the camera at 100px position and the tile is at 120px position, we show the tile at 20px position
-				destrect.x = j * tileSize - GameObject::coord.x;
-				//destrect.y = i*50; //original
-				destrect.y = i*50 - coord.y;
+				//destrect.x = j * tileSize - GameObject::getX();
+				destrect.x = j * tileSize - 0;
+				destrect.y = i*tileSize; //original
+				//destrect.y = i*50 - GameObject::getCoord().y;
 
 				//destrect.x = j * tileSize - tile.x;
 				//destrect.y = i*50 - tile.y;
@@ -350,6 +383,9 @@ void World::showmap()
 				//						j * tileSize - coord.x, i*50
 				//					};
 				//SDL_BlitSurface(block, &blockrect,screen,&destrect);
+				//al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,blockrect.w,blockrect.h,destrect.x, destrect.y,0); //original
+				//al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,visibleWidth,visibleHeight,destrect.x, destrect.y,0); //original
+				/*al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,visibleWidth,visibleHeight,destrect.x, destrect.y,0);*/
 				al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,blockrect.w,blockrect.h,destrect.x, destrect.y,0); //original
 				//al_flip_display();
 
@@ -359,28 +395,35 @@ void World::showmap()
 	}
 }
 
+void World::setMapVisibleSize(unsigned int width, unsigned int height)
+{
+	visibleWidth = width;
+    visibleHeight = height;
+}
+
 
 void World::setStartMapBoundaries(Rect coordinate)
 {
-	coordinate = GameObject::getCoord();
-		/*int*/ start = ( coordinate.x - ((int)coordinate.x % tileSize)) / tileSize;
-	
-	if (start < 0)
-	{
-		start=0;
-	}
+	//coordinate = GameObject::getCoord();
+	//	/*int*/ start = ( coordinate.x - ((int)coordinate.x % tileSize)) / tileSize;
+	//
+	//if (start < 0)
+	//{
+	//	start=0;
+	//}
 
 }
 
 void World::setEndMapBoundaries(Rect coordinate)
 {
-	coordinate = GameObject::getCoord();
-	/*int*/ end = (coordinate.x + coordinate.w + (tileSize - (int)(coordinate.x + coordinate.w) % tileSize)) / 50;
-	
-	if (end > map[0].size())
-	{
-		end = map[0].size();
-	}
+	//coordinate = GameObject::getCoord();
+	/////*int*/ end = (coordinate.x + coordinate.w + (tileSize - (int)(coordinate.x + coordinate.w) % tileSize)) / 50;
+	//end = map.size();
+	//
+	//if (end > map[0].size())
+	//{
+	//	end = map[0].size();
+	//}
 
 
 
@@ -399,8 +442,8 @@ int World::getEndMapBoundaries()
 // will modify xVal and yVal variabes from PhysicsComponents i.e currentTileX and currentTileY
 void World::GetCurrentTileValues(float xPos, float yPos, int& xVal, int& yVal)
 {
-	xVal = xPos / tile.w;
-	yVal = yPos / tile.h;
+	//xVal = xPos / tile.w;
+	//yVal = yPos / tile.h;
 }
 
 //void background::Update(std::vector<std::vector<int> >& map)
@@ -418,9 +461,10 @@ void World::update()
 void World::render()
 {
 	//will update only background, not foreground
-	al_draw_bitmap_region(bgImg, GameObject::getCoord().x,GameObject::getCoord().y,GameObject::getCoord().w,GameObject::getCoord().h,0,0,0);
+	//al_draw_bitmap_region(bgImg, GameObject::getCoord().x,GameObject::getCoord().y,GameObject::getCoord().w,GameObject::getCoord().h,0,0,0);
 	//al_draw_bitmap_region(bgImg, 0,0,World::coord.w,World::coord.h,0,0,0);
 	//al_draw_bitmap_region(bgImg, tile.x,tile.y,tile.w,tile.h,0,0,0);
+	al_draw_bitmap_region(bgImg, 0,0,al_get_bitmap_width(bgImg),al_get_bitmap_height(bgImg),0,0,0);
 
 	//will update only tileset, not background
 	showmap();

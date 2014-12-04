@@ -1,8 +1,13 @@
 #include "BoundingBox.h"
 
 
-BoundingBox::BoundingBox(void)
+BoundingBox::BoundingBox(float x,float y,float width,float height, bool ignoreCollision)
 {
+	this->position.x = x;
+	this->position.y = y;
+	this->position.w = width;
+	this->position.h = height;
+	this->ignoreCollision = ignoreCollision;
 }
 
 
@@ -10,10 +15,10 @@ BoundingBox::~BoundingBox(void)
 {
 }
 
-void BoundingBox::init(float x,float y,float width,float height, float velX, float velY)
-{
-
-}
+//void BoundingBox::init(float x,float y,float width,float height, float velX, float velY)
+//{
+//
+//}
 
 bool BoundingBox::overlapsWith(BoundingBox& OtherBox)
 {
@@ -38,7 +43,7 @@ bool BoundingBox::overlapsWith(BoundingBox& OtherBox)
 }
 
 
-bool BoundingBox::valueInRange(int value, int min, int max)
+bool BoundingBox::valueInRange(float value, float min, float max)
 {
 	return (value >= min) && (value <= max);
 }

@@ -1,5 +1,7 @@
 #pragma once
-#include "GameObject.h"
+//#include "GameObject.h"
+#include "Player.h"
+#include "Tile.h"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -8,12 +10,13 @@
 
 enum COLLISION_TYPE{COLLIDE_NONE, COLLIDE_SOLID, COLLIDE_PLATFORM, COLLIDE_SLOPE};
 
-class World : public GameObject
+class World
 {
 private:
 	//static World* instance;
 	//World(void);
 	//Rect GameObject::coord;
+	int mapWidth,mapHeight;
 	std::vector<std::vector<int> > map;
 	ALLEGRO_BITMAP *bgImg;
 	ALLEGRO_BITMAP *tileImg;
@@ -22,18 +25,29 @@ private:
 	Rect blockrect;
 	Rect destrect;
 	//World(World const&); // the trouble to return object instance	
-	Rect tile;
+	//Rect tile;
 	Rect posMap;
 	//int mapX;
 	//int mapY;
 	static int start;
 	static unsigned int end;
+	unsigned int visibleWidth;
+    unsigned int visibleHeight;
+
+	//tileset info
+	unsigned int cellSize;
+	unsigned int tileHorizontalGap;
+	unsigned int tileVerticalGap;
+	unsigned int offset;
+
 	//maping of the tiles and their collision type
 	std::map<int,std::string> m_CollisionMap;
 	std::vector<GameObject*> entities;
+	Player *player;
 
 protected:
 		static const int tileSize = 50;
+		//Tile tileset[];
 public:
 	//World(ALLEGRO_BITMAP *bgSheet, char* filename, ALLEGRO_BITMAP *bgImage);
 	World(void);
@@ -52,15 +66,17 @@ public:
 	void setStartMapBoundaries(Rect coordinate);
 	void setEndMapBoundaries(Rect coordinate);
 
+	void setMapVisibleSize(unsigned int width, unsigned int height);
+
 	void addEntity(GameObject gameObject);
 
 	int getStartMapBoundaries();
 	int getEndMapBoundaries();
 	int getMapSize(){return tileSize * map[0].size();}
 	static int getTileSize(){return World::tileSize;}
-	float getXVel(){return World::velX;}
-	float getCoordX(){return coord.x;}
-	int getDirX(){return World::dirX;}
+	//float getXVel(){return World::velX;}
+	//float getCoordX(){return coord.x;}
+	//int getDirX(){return GameObject::getDirX();}
 
 	Rect getBlockRect(){return World::blockrect;}
 	Rect getDestRect(){return World::destrect;}
@@ -69,11 +85,14 @@ public:
 	void setMapPos(float& x, float& y);
 	// will modify xVal and yVal variabes from PhysicsComponents
 	void GetCurrentTileValues(float xPos, float yPos, int& xVal, int& yVal);
+	void addPlayer(Player *p);
 
 	//std::vector<std::vector<int> >& GetMap(){return map;}
 	std::vector<std::vector<int> >& getMap() {return map;}
 
-	Rect getTile(){return tile;}
+	void checkCollisionWith(Character *character);
+
+	//Rect getTile(){return tile;}
 
 	//static background& GetInstance(){}; // the trouble to return object instance
 	//rectangle GetRect(){return background::box;}

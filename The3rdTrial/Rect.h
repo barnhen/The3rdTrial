@@ -9,7 +9,7 @@ struct Rect
 	float vY;
 	
 	//constructor
-	//Rect(float x, float y): x(x), y(y) {}
+	//Rect(float x, float y, float width, float height): x(x), y(y), w(width),h(height) {}
 };
 
 //

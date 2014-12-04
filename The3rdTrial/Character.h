@@ -18,6 +18,8 @@ protected:
 	float imageW, imageH;
 	float x, y;
 	float collisionTime;
+	float verticalSpeedLimit;
+	float jumpingForce;
 	Rect box;
 	PhysicsComponent* charPhysics;
 	int tileSize;
@@ -27,18 +29,18 @@ protected:
 	Rect middleRightTileRect; // the tile that's middle right of the char
 	Rect collisionRect; // the tile that's middle right of the char
 public:
-	Character(ALLEGRO_BITMAP *pImg);
+	Character(float x, float y, float width, float height, float velX, float velY, float maxVelY, ALLEGRO_BITMAP *pImg);
 	~Character(void);
 
 	void updatePhysics();
 
-	void init(float x, float y, float width, float height, float velX, float velY);
+	void init(float x, float y, float width, float height, float velX, float velY, float maxVelY);
 	void handleInput(const ALLEGRO_EVENT& ev); //will handle keyboard events
 
 	float getWidth(){return imageW;}
 	float getHeight(){return imageH;}
-	float getVelX(){return GameObject::velX;}
-	float getVelY(){return GameObject::velY;}
+	float getVelX(){return box.vX;}
+	float getVelY(){return box.vY;}
 
 	float getCollisionTime(){return collisionTime;}
 

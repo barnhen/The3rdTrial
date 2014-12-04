@@ -1,6 +1,6 @@
 #pragma once
 #include "Character.h"
-#include "World.h"
+//#include "World.h"
 class Player :	public Character
 {
 private:
@@ -29,6 +29,10 @@ protected:
 	const char* debugCollisionMsg;
 
 public:
+	Player(float x, float y, float width, float height, float velX, float velY, float maxVelY, ALLEGRO_BITMAP *pImg);
+	//Player();
+	~Player(void);
+
 	//void init(ALLEGRO_BITMAP *pImg);
 	void update(std::vector<std::vector<int> >& map);
 	//void update();
@@ -38,16 +42,16 @@ public:
 	float getPosXVel(){return Player::velPosX;}
 	float getPosYVel(){return Player::velPosY;}
 
-	float getCoordX(){return Player::coord.x;}
+	//float getCoordX(){return Player::coord.x;}
 	int getDirX(){return Player::dirX;}
-	Rect getCoord(){return Player::coord;}
+	//Rect getCoord(){return Player::coord;}
 	Rect getDestRect(){return Player::destrect;}
 	Rect getRect(){return Character::box;}
 	Rect getPos(){return Player::pos;}
 	Rect getCamera(){return Player::camera;}
-	float getX(){return Character::box.x;}
-	float getY(){return Character::box.y;}
-	bool isJumpAllowed(){return true;}
+	//float getX(){return Character::box.x;}
+	//float getY(){return Character::box.y;}
+	bool isJumpAllowed();
 	bool isColliding(){return true;}
 	bool isJumping(){return true;}
 	int getIsScrolling(){return Player::isScrolling;}
@@ -75,9 +79,6 @@ public:
 	const char* getDebugPlayerMov(){return Player::debugMsg;}
 	const char* getDebugPlayerCollision(){return Player::debugCollisionMsg;}
 	
-	Player(ALLEGRO_BITMAP *pImg);
-	//Player();
-	~Player(void);
 
 	//player& GetInstance(){return player();};
 	//static Player &getInstance(); // the trouble to return object instance

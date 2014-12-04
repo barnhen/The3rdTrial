@@ -11,19 +11,29 @@ private:
 	float upperLeftCornerY;
 	float height;
 	float width;
+	bool ignoreCollision;
+	//Rect box;
+	Rect position;
 public:
-	BoundingBox(void);
+	BoundingBox(float x,float y,float width,float height,bool ignoreCollision);
 	~BoundingBox(void);
 
-	void init(float x,float y,float width,float height,float velX,float velY);
+	//void init(float x,float y,float width,float height,float velX,float velY);
 
 	bool overlapsWith(BoundingBox& OtherBox);
 	bool rectTouch(Rect box1 , Rect box2);
 	bool rectOverlap(Rect box1 , Rect box2);
-	bool valueInRange(int value, int min, int max);
+	bool valueInRange(float value, float min, float max);
 
 	bool hasVerticalCollision(Rect box1 , Rect box2);
 	bool hasHorizontalCollision(Rect box1 , Rect box2);
+
+	void setX(float x) {position.x = x;}
+
+	float getX(){return position.x;}
+	float getY(){return position.y;}
+	float getWidth(){return position.w;}
+	float getHeight(){return position.h;}
 
 	// performs collision detection on moving box b1 and static box b2
 	// returns the time that the collision occured (where 0 is the start of the movement and 1 is the destination)

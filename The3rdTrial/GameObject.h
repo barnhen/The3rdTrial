@@ -36,25 +36,38 @@ protected:
 	int dirX;
 	int dirY;
 	//everytime coord is updated by Player object the background if updated
-	static Rect coord;//coord variable, store the absolute coordinate of the screen, so if I go a 1000px it will be a 1000px
-	float x,y,height,width;
+	//static Rect coord;//coord variable, store the absolute coordinate of the screen, so if I go a 1000px it will be a 1000px
+	Rect coord;
+	//Rect box;
+	//float x,y,height,width;
 
 	bool collision(Rect* rec1, Rect* rec2);
 	BoundingBox boundingBox;
 	//World world;
 
 public:
-	GameObject(void);
+	//instantianting super class with default values
+	GameObject(void) : boundingBox(0,0,0,0,true){};
+
+	//instantianting super class
+	GameObject(float x ,float y ,float width, float height, float velX, float velY, bool ignoreCollision = true) 
+				: boundingBox(x,y,width,height,ignoreCollision){};
+
 	~GameObject(void);
 
 	//void virtual Update(std::vector<std::vector<int> >& map);
 	void virtual update();
 	void virtual render();
 	void init(float x ,float y ,float width, float height, float velX, float velY);
-	int getX(){return coord.x;}
-	int getY(){return coord.y;}
+	int getX(){return this->boundingBox.getX();}
+	int getY(){return this->boundingBox.getX();}
+	int getWidth(){return this->boundingBox.getWidth();}
+	int getHeight(){return this->boundingBox.getHeight();}
+	int getDirX(){return dirX;}
+	int getDirY(){return dirY;}
 
-	static Rect getCoord(){return coord;}
+
+	//static Rect getCoord(){return coord;}
 
 	float getXVel(){return this->velX;}
 	float getYVel(){return this->velY;}
