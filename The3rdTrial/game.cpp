@@ -87,10 +87,10 @@ void Game::showDebugMode(void)
 	//al_init_ttf_addon();
 	al_draw_textf(font18, al_map_rgb(255, 255, 0), 5, 5, 0, "FPS: ", fps); // display Game FPS on screen
 	al_draw_textf(font18, al_map_rgb(255, 255, 0), 105, 5, 0, "STATE: %d", state); // display state
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "Player x vel: %.2f", player1->getXVel()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 25, 0, "Player dirX: %i", player1->getDirX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 25, 0, "Player posX: %.2f", player1->getPos().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 25, 0, "Player posY: %.2f", player1->getPos().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "cam Focus x: %.2f", cam.getFocus().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 25, 0, "cam Pos X: %.2f", cam.getPosition().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 25, 0, "Player posX: %.0f", player1->getX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 25, 0, "Player posY: %.0f", player1->getY()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "Player box x: %.2f", player1->getRect().x);
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 35, 0, "Player box y: %.2f", player1->getRect().y);
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "Player cam x: %.2f", player1->getCamera().x);
@@ -103,20 +103,20 @@ void Game::showDebugMode(void)
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 45, 0, "Player desH: %.2f", player1->getDestRect().h);
 
 
-	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "bg coord x: %2.f", GameObject::getCoord().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "bg bomapx x: %i", bg->getMapSize()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "bg blockrect y: %i", bg->getBlockRect().y); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %i", bg->getDestRect().y);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "map pos x: %.2f", bg->getMapPosX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "bg map width: %i", bg->getWidth()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "bg map height: %.i", bg->getHeight()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %.2f", bg->getDestRect().y);
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 55, 0, "collision time: %.2f", player1->getCollisionTime());
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Camera x: %2.f", cam.getX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Camera y: %2.f", cam.getY()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 65, 0, "Camera pos x: %2.f", cam.getPosition().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 65, 0, "Camera pos y: %2.f", cam.getPosition().y); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 65, 0, "Camera target mode: %s", cam.getCameraTargetMode());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Cam x: %.2f", cam.getX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Cam y: %.2f", cam.getY()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 65, 0, "Cam pos x: %.2f", cam.getPosition().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 65, 0, "Cam pos y: %.2f", cam.getPosition().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 65, 0, "Cam target mode: %s", cam.getCameraTargetMode());
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 75, 0, "cam focus x: %2.f", cam.getFocus().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 75, 0, "cam focus y: %2.f", cam.getFocus().y); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 75, 0, "cam focus x: %.2f", cam.getFocus().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 75, 0, "cam focus y: %.2f", cam.getFocus().y); 
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 65, 0, "cam pos x: %2.f", cam.getPosition().x); 
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 65, 0, "cam pos y: %2.f", cam.getPosition().y); 
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 75, 0, "cam target mode: %s", cam.getCameraTargetMode());
@@ -124,7 +124,7 @@ void Game::showDebugMode(void)
 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 85, 0, "Scrolling: %s", player1->getIsScrolling()?"true":"false"); 
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 85, 0, "Camera X: %f", cam.getX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 85, 0, "Player coord X: %f", player1->getPos());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 85, 0, "Player coord X: %.0f", player1->getX());
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 95, 0, "Player bg start bound: %i", bg->getStartMapBoundaries());
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 95, 0, "Player bg end bound: %i", bg->getEndMapBoundaries());
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 105, 0, player1->getDebugPlayerMov()); 
@@ -206,7 +206,7 @@ void Game::initializeGameEngine ()
 
 	//bg = new World(tileSheet,"map/map.map", bgImage);
 	bg = new World();
-	if (!bg->loadmap("map/map.map"))
+	if (!bg->loadMap("map/map.map"))
 	{
 		std::cout << "error loading map" << std::endl;
         std::exit(1);
@@ -216,10 +216,10 @@ void Game::initializeGameEngine ()
 
 	cam.setSize(WIDTH,HEIGHT);
 
-	player1 = new Player(180,0,40,64,0,0,8, PlayerImage);
+	player1 = new Player(180,0,40,64,4,0,8, PlayerImage);
 	std::cout<<"Player loaded"<<std::endl;
 	//will call the init() method from Character which is superclass of player
-	//player1->init();
+	player1->init();
 	//player1->init(380,0,40,64,0,0,8); //starting x,y, width, height, vX and vy
 	bg->addPlayer(player1);
 
@@ -345,8 +345,8 @@ void Game::processGameEngine()
 			player1->update(bg->getMap());
 			//player1->update();
 			
-			//cam->update(player1);
-			cam.update(player1->getRect().x, player1->getRect().y);
+			cam.update();
+			//cam.update(player1->getRect().x, player1->getRect().y);
 			Rect cameraPos = cam.getPosition();
 			//
 			Rect cameraFocus;
@@ -359,8 +359,8 @@ void Game::processGameEngine()
 
 			//std::cout<<"cameraPos.x is="<<cameraPos.x<<std::endl;
 			//std::cout<<"cameraPos.y is="<<cameraPos.y<<std::endl;
-			cameraFocus.x = cameraPos.x + WIDTH/2;
-			cameraFocus.y = cameraPos.y + HEIGHT/2;
+			cameraFocus.x = cameraPos.x + WIDTH/2; // here will me center of screen measure the point where the player will scroll the background
+			cameraFocus.y = cameraPos.y + HEIGHT/2; // here will me center of screen measure the point where the player will scroll the background
    //             
             cam.setPosition(cameraPos.x, cameraPos.y);
             cam.setFocus(cameraFocus.x, cameraFocus.y);

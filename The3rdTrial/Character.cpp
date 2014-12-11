@@ -8,6 +8,7 @@ Character::Character(float x, float y, float width, float height, float velX, fl
 {
 	std::cout<<"MAX_ENUM_LENGHT is "<<MAX_ENUM_LENGHT<<std::endl;
 
+	loaded = false;
 	this->box.x=x;
 	this->box.y=y;
 	this->box.w=width;
@@ -37,19 +38,22 @@ Character::~Character(void)
 {
 }
 
-void Character::init(float x, float y, float width, float height, float velX, float velY, float maxVelY) {
+//void Character::init(float x, float y, float width, float height, float velX, float velY, float maxVelY) {
+void Character::init() 
+	{
+	loaded = true;
     //if (!loaded) {
     //    loaded = load_frames();
     //    update_bounding_boxes();
-	this->tileSize =50;
-	this->box.x = x;
-	this->box.y = y;
-	this->box.w = width;
-	this->box.h = height;
-	this->box.vX = velX;
-	this->box.vX = velY;
+	//this->tileSize =50;
+	//this->box.x = x;
+	//this->box.y = y;
+	//this->box.w = width;
+	//this->box.h = height;
+	//this->box.vX = velX;
+	//this->box.vX = velY;
 	collisionTime = 0.0f;
-	verticalSpeedLimit = maxVelY;
+	//verticalSpeedLimit = maxVelY;
 	//GameObject::init(x,y,imageW,imageH, velX, velY);
 	//bb.set_w(al_get_bitmap_width(f->image));
  //   bb.set_h(al_get_bitmap_height(f->image));
@@ -143,6 +147,12 @@ void Character::handleInput(const ALLEGRO_EVENT& ev)
 		}
 	}
 }
+
+void Character::update()
+{
+
+}
+
 
 void Character::updatePhysics()
 {

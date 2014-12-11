@@ -2,7 +2,11 @@
 #include <cmath> // for SweptAABB
 #include <algorithm> // for SweptAABB
 #include <limits> // for SweptAABB
+#include <iostream>
 #include "Rect.h"
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+
 
 class BoundingBox
 {
@@ -14,6 +18,7 @@ private:
 	bool ignoreCollision;
 	//Rect box;
 	Rect position;
+	ALLEGRO_COLOR color;
 public:
 	BoundingBox(float x,float y,float width,float height,bool ignoreCollision);
 	~BoundingBox(void);
@@ -28,18 +33,28 @@ public:
 	bool hasVerticalCollision(Rect box1 , Rect box2);
 	bool hasHorizontalCollision(Rect box1 , Rect box2);
 
-	void setX(float x) {position.x = x;}
+	void setX(float x);
+	void setY(float y); 
 
-	float getX(){return position.x;}
-	float getY(){return position.y;}
-	float getWidth(){return position.w;}
-	float getHeight(){return position.h;}
+	//float getX() const {return position.x;}
+	//float getY() const {return position.y;}
+	//float getWidth() {return position.w;}
+	//float getHeight() {return position.h;}
+
+	float getX() const;
+	float getY() const;
+	float getWidth() const;
+	float getHeight() const;
+
 
 	// performs collision detection on moving box b1 and static box b2
 	// returns the time that the collision occured (where 0 is the start of the movement and 1 is the destination)
 	// getting the new position can be retrieved by box.x = box.x + box.vx * collisiontime
 	// normalx and normaly return the normal of the collided surface (this can be used to do a response)
-	float sweptAABB(Rect box1, Rect box2, float& normalx, float& normaly);
+	//float sweptAABB(Rect box1, Rect box2, float& normalx, float& normaly);
+
+	//will draw the grid of entire map if toggleGrid funciont is on
+	void draw() const;
 
 	Rect getTop();
 	Rect getBottom();

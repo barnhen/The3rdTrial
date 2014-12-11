@@ -59,18 +59,23 @@ public:
 	void virtual update();
 	void virtual render();
 	void init(float x ,float y ,float width, float height, float velX, float velY);
-	int getX(){return this->boundingBox.getX();}
-	int getY(){return this->boundingBox.getX();}
-	int getWidth(){return this->boundingBox.getWidth();}
-	int getHeight(){return this->boundingBox.getHeight();}
+
+	/*below is a constant funciton, meaning a function that will not alter any member variables of the class
+	 it belongs to. This is the style recommended to us getter, since their only purpose is to retrieve data
+	 and should not modify anyhing in the process
+	*/
+	float getX() const {return boundingBox.getX();}
+	float getY() const {return boundingBox.getY();}
+	float getWidth(){return this->boundingBox.getWidth();}
+	float getHeight(){return this->boundingBox.getHeight();}
 	int getDirX(){return dirX;}
 	int getDirY(){return dirY;}
 
 
 	//static Rect getCoord(){return coord;}
 
-	float getXVel(){return this->velX;}
-	float getYVel(){return this->velY;}
+	//float getXVel(){return this->coord.vX;}
+	//float getYVel(){return this->coord.vY;}
 
 
 	//bool intersects(Rect r);

@@ -42,8 +42,8 @@ public:
 	void setPosition(float x, float y);
 	void setTarget(float* x, float* y);
     void setFocus(float fx, float fy);
-	//void update(Player* p1);
-	void update(int moveX, int moveY);
+	void update();
+	//void update(int moveX, int moveY);
 	float getX();
 	float getY();
 	Rect getFocus();

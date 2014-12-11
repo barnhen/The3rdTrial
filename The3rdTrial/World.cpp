@@ -22,6 +22,8 @@ World::World(void)
 	tileSheet=NULL;
 	//tile.w = tileSize;
 	//tile.h = tileSize;
+	defaultTileId = 0;
+
 }
 
 World::~World(void)
@@ -51,10 +53,24 @@ void World::setMapPos(float& x, float& y)
 	//coord.y = 0;
 	//coord.w = WIDTH;
 	//coord.h = HEIGHT;
+	//std::cout<<"x="<<x<<std::endl;
+	//std::cout<<"y="<<y<<std::endl;
+	if (x < 0) 
+		x = 0;
+    else if (x + visibleWidth > width) 
+		x = width - visibleWidth; //if the player is in right limit of the scenario
+    if (y < 0) 
+		y = 0; //if the player is in below the lowest limit of the scenario
+    else if (y + visibleHeight > height) 
+		y = height - visibleHeight; //if the player is above the hightest vertical limit of the scenario
+    
+    mapX = x;
+    mapY = y;
+
 }
 
 
-bool World::loadmap(const char* filename)
+bool World::loadMap(const char* filename)
 {
 	//bgImg = bgImage;
 	//tileImg = bgSheet;
@@ -68,6 +84,8 @@ bool World::loadmap(const char* filename)
 		std::cout<<"loaded bg image"<<std::endl;
 	}
 
+	tilesetFilename = "image\\TileSet-1.fw.png";
+
 	tileSheet = al_load_bitmap("image\\TileSet-1.fw.png");//World.png TileSet-1.fw.png
 	if(!tileSheet){
 		std::cout<<"Couldn't load tile image"<<std::endl;
@@ -77,6 +95,13 @@ bool World::loadmap(const char* filename)
 	{
 		std::cout<<"loaded tileset image"<<std::endl;
 	}
+
+	tileHorizontalGap = 2;
+	tileVerticalGap = 2;
+	offset = 2;
+
+
+	//loadTileSet(tilesetFilename, tileSize, tileHorizontalGap, tileVerticalGap, offset);
 
 	//for(int i = 0; i < size; i++)
 	//{
@@ -100,8 +125,11 @@ bool World::loadmap(const char* filename)
 	}
 
 	
-	in >> mapWidth;
-	in >> mapHeight;
+	in >> cols;
+	in >> rows;
+
+	width = calcWidth();
+	height = calcHeight();
 	
 
 	//std::string line;
@@ -118,22 +146,34 @@ bool World::loadmap(const char* filename)
 	//}
 
 
-	std::cout<<"mapWidth"<<mapWidth<<std::endl;
-	std::cout<<"mapHeight"<<mapHeight<<std::endl;
+	std::cout<<"cols->"<<cols<<std::endl;
+	std::cout<<"rows->"<<rows<<std::endl;
 	int current; //current block tile number
-	for (int i = 0; i < mapHeight; i++)
+
+	int posY = 0;
+
+	for (unsigned int j = 0; j < rows; j++)
+	//for (unsigned int i = 0; i < mapHeight; i++)
 	{
 		std::vector<int> vec;
+		int posX = 0;
 
-		for (int j = 0; j < mapWidth; j++)
-		{
+		//for (unsigned int j = 0; j < mapWidth; j++)
+		for (unsigned int i = 0; i < cols; i++)
+		{		
 			if(in.eof())
 			{
 				std::cout<<"File end has reached too soon"<<std::endl;
 				return false;
 			}
-			
+			int id = defaultTileId;
+
 			in >> current;
+			
+			id = current;
+
+			Tile *tile = new Tile(posX,posY,tileSize,tileSize, id);
+
 			if (current == -1)
 			{
 			//	enemies.push_back(new enemy(ene, j* 50, i * 50, 1, 0));
@@ -157,14 +197,69 @@ bool World::loadmap(const char* filename)
 					vec.push_back(0);
 				}
 			}
+			cells.push_back(tile);
+
+			//posX += tileSize;
+			
 		}
+		
+		//posY += tileSize;
+
 		map.push_back(vec);
+		
 	}
 	in.close();
+	
+    width  = getWidth();
+    height = getHeight();
+
 	//std::cout<< finish.x << " " << finish.y << std::endl;
 	//inteiro = 4;
 	std::cout<<"map loaded"<< std::endl;
+
+	//mapBitmap =	createBitmap();
+
 	return true;
+}
+
+//this will wrap the tileset , the background, thee foreground... into a single bitmap layer
+ALLEGRO_BITMAP* World::createBitmap()
+{
+	float width = getWidth();
+	float height = getHeight();
+
+    ALLEGRO_BITMAP *bmp = al_create_bitmap(width, height); // Creates a new bitmap using the bitmap format and flags for the current thread
+    ALLEGRO_BITMAP *old = al_get_target_bitmap(); // Return the target bitmap of the calling thread
+
+	al_set_target_bitmap(bmp); // This function selects the bitmap to which all subsequent drawing operations in the calling thread will draw to
+
+	for (unsigned int index = 0; index < cells.size(); ++index) 
+	{
+        Tile *tile = cells[index];
+		std::cout<<"tile id="<<tile->getId()<<" ;tile x="<<tile->getX()<<" ;tile y="<<tile->getY()<<std::endl;
+        al_draw_bitmap(tiles[tile->getId()], tile->getX(), tile->getY(), 0);
+        if (showGrid) {
+			cells[index]->drawBoundingBox();
+        }
+    }
+
+	std::cout<<"map bitmap created"<<std::endl;
+
+	al_set_target_bitmap(old); // and set the target bitmap to be using in the next update
+	al_save_bitmap("bg_draw.png", bmp);
+
+	return bmp;
+}
+
+
+unsigned int World::calcWidth() const 
+{
+	return tileSize * cols;
+}
+
+unsigned int World::calcHeight() const 
+{
+	return tileSize * rows;
 }
 
 
@@ -318,7 +413,77 @@ void World::addPlayer(Player *p)
 	this->player =p;
 }
 
-void World::showmap()
+
+bool World::loadTileSet(const std::string& imgName, int cellDimension, int gapX, int gapY, int offset)
+{
+
+    //ALLEGRO_BITMAP *tileimg = al_load_bitmap(imgName.c_str());
+    //if (!tileimg) {
+    //    std::cout << "tileset file not found: " << imgName << std::endl;
+    //    return false;
+    //}
+
+	tileSheet = al_load_bitmap(imgName.c_str()); // c_str will convert form char* to string
+	if(!tileSheet){
+		std::cout<<"Couldn't load tile image"<<std::endl;
+		return false;
+	}
+	else
+	{
+		std::cout<<"loaded tileset image"<<std::endl;
+	}
+
+    
+    this->tileHorizontalGap = gapX;
+    this->tileVerticalGap = gapY;
+    this->offset = offset;
+    this->cellSize = cellDimension;
+    this->tilesetFilename.assign(imgName.c_str());
+    
+    std::cout << "loading " << imgName << std::endl;
+    
+    unsigned int posX         = this->offset;
+    unsigned int posY         = this->offset;
+    unsigned int bitmapWidth  = al_get_bitmap_width(tileSheet);
+    unsigned int bitmapHeight = al_get_bitmap_height(tileSheet);
+    
+    while (posY < bitmapHeight) {
+        if (posX + cellSize < bitmapWidth) {
+			std::cout << "Cloning " << imgName << std::endl;
+			// Create a new bitmap with al_create_bitmap, and copy the pixel data from the old bitmap across with al_clone_bitmap.
+            ALLEGRO_BITMAP *tile = al_clone_bitmap(al_create_sub_bitmap(tileSheet, 
+                                                                        posX, 
+                                                                        posY, 
+                                                                        cellSize,
+                                                                        cellSize));
+        
+            if (!tile) {
+                std::cout << "error cloning tile" << std::endl;
+                return false;
+            }
+        
+			std::cout << "Adding tile" << imgName << std::endl;
+            tiles.push_back(tile);
+            posX += cellSize + tileHorizontalGap;
+        } else {
+            posX = this->offset;
+            posY += cellSize + tileVerticalGap;
+        }
+    }
+    
+    al_destroy_bitmap(tileSheet);
+    return true;	
+}
+
+void World::drawMap()
+{
+
+}
+
+
+
+//alternative
+void World::showMap()
 {
 	//int start = ( GameObject::coord.x - (coord.x % tileSize)) / tileSize;
 	//int end = (coord.x + coord.w + (tileSize - (coord.x + coord.w) % tileSize)) / 50;
@@ -345,9 +510,9 @@ void World::showmap()
 	//{
 	//	for (unsigned int j = 0; j < mapHeight; j++)
 	//Player *player;
-	for (unsigned int i = 0; i < mapHeight; i++)
+	for (unsigned int i = 0; i < rows; i++)
 	{
-		for (unsigned int j = 0; j < mapWidth; j++)
+		for (unsigned int j = 0; j < cols; j++)
 		{
 			if (map[i][j] !=0)
 			{
@@ -370,7 +535,7 @@ void World::showmap()
 
 				//destrect = destination rectangle and in the screen (so for example if the camera at 100px position and the tile is at 120px position, we show the tile at 20px position
 				//destrect.x = j * tileSize - GameObject::getX();
-				destrect.x = j * tileSize - 0;
+				destrect.x = j * tileSize;
 				destrect.y = i*tileSize; //original
 				//destrect.y = i*50 - GameObject::getCoord().y;
 
@@ -385,8 +550,8 @@ void World::showmap()
 				//SDL_BlitSurface(block, &blockrect,screen,&destrect);
 				//al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,blockrect.w,blockrect.h,destrect.x, destrect.y,0); //original
 				//al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,visibleWidth,visibleHeight,destrect.x, destrect.y,0); //original
-				/*al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,visibleWidth,visibleHeight,destrect.x, destrect.y,0);*/
-				al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,blockrect.w,blockrect.h,destrect.x, destrect.y,0); //original
+				//al_draw_bitmap_region(tileSheet, mapX,mapY,visibleWidth,visibleHeight,0, 0,0);
+				al_draw_bitmap_region(tileSheet, blockrect.x,blockrect.y,blockrect.w,blockrect.h,destrect.x - mapX, destrect.y - mapY,0); //original
 				//al_flip_display();
 
 			}
@@ -395,7 +560,7 @@ void World::showmap()
 	}
 }
 
-void World::setMapVisibleSize(unsigned int width, unsigned int height)
+void World::setMapVisibleSize(float width, float height)
 {
 	visibleWidth = width;
     visibleHeight = height;
@@ -464,10 +629,11 @@ void World::render()
 	//al_draw_bitmap_region(bgImg, GameObject::getCoord().x,GameObject::getCoord().y,GameObject::getCoord().w,GameObject::getCoord().h,0,0,0);
 	//al_draw_bitmap_region(bgImg, 0,0,World::coord.w,World::coord.h,0,0,0);
 	//al_draw_bitmap_region(bgImg, tile.x,tile.y,tile.w,tile.h,0,0,0);
-	al_draw_bitmap_region(bgImg, 0,0,al_get_bitmap_width(bgImg),al_get_bitmap_height(bgImg),0,0,0);
+	//al_draw_bitmap_region(bgImg, 0,0,al_get_bitmap_width(bgImg),al_get_bitmap_height(bgImg),0,0,0); // works
+	al_draw_bitmap_region(bgImg, mapX,mapY,visibleWidth,visibleHeight,0, 0,0); // works too
 
 	//will update only tileset, not background
-	showmap();
+	showMap();
 }
 
 

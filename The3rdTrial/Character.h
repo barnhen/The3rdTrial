@@ -15,6 +15,7 @@ class Character : public GameObject
 protected:
 	bool keys[MAX_ENUM_LENGHT];
 	bool visibleBoundingBox;
+	bool loaded;
 	float imageW, imageH;
 	float x, y;
 	float collisionTime;
@@ -32,15 +33,20 @@ public:
 	Character(float x, float y, float width, float height, float velX, float velY, float maxVelY, ALLEGRO_BITMAP *pImg);
 	~Character(void);
 
+	void update();
 	void updatePhysics();
 
-	void init(float x, float y, float width, float height, float velX, float velY, float maxVelY);
+	//void init(float x, float y, float width, float height, float velX, float velY, float maxVelY);
+	void init();
 	void handleInput(const ALLEGRO_EVENT& ev); //will handle keyboard events
 
-	float getWidth(){return imageW;}
-	float getHeight(){return imageH;}
-	float getVelX(){return box.vX;}
-	float getVelY(){return box.vY;}
+	float getWidth(){return box.w;}
+	float getHeight(){return box.h;}
+	//float getVelX(){return box.vX;}
+	//float getVelY(){return box.vY;}
+	float getSpeedX(){return box.x;}
+	float getSpeedY(){return box.y;}
+
 
 	float getCollisionTime(){return collisionTime;}
 

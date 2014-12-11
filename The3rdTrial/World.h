@@ -2,11 +2,17 @@
 //#include "GameObject.h"
 #include "Player.h"
 #include "Tile.h"
-#include <string>
+#include <cmath>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <sstream>
+#include <cstdio>
+#include <cstdlib>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+
 
 enum COLLISION_TYPE{COLLIDE_NONE, COLLIDE_SOLID, COLLIDE_PLATFORM, COLLIDE_SLOPE};
 
@@ -16,8 +22,13 @@ private:
 	//static World* instance;
 	//World(void);
 	//Rect GameObject::coord;
-	int mapWidth,mapHeight;
+	unsigned int rows,cols;
 	std::vector<std::vector<int> > map;
+	std::vector<Tile*> cells;
+	std::vector<ALLEGRO_BITMAP*> tiles;
+	bool showGrid;
+	int defaultTileId;
+
 	ALLEGRO_BITMAP *bgImg;
 	ALLEGRO_BITMAP *tileImg;
 	ALLEGRO_BITMAP *tileSheet;
@@ -27,23 +38,28 @@ private:
 	//World(World const&); // the trouble to return object instance	
 	//Rect tile;
 	Rect posMap;
-	//int mapX;
-	//int mapY;
+	unsigned int mapX;
+	unsigned int mapY;
 	static int start;
 	static unsigned int end;
-	unsigned int visibleWidth;
-    unsigned int visibleHeight;
+	float visibleWidth;
+    float visibleHeight;
+	unsigned int width;
+	unsigned int height;
 
 	//tileset info
 	unsigned int cellSize;
 	unsigned int tileHorizontalGap;
 	unsigned int tileVerticalGap;
 	unsigned int offset;
+	std::string tilesetFilename;
 
 	//maping of the tiles and their collision type
 	std::map<int,std::string> m_CollisionMap;
 	std::vector<GameObject*> entities;
 	Player *player;
+
+	ALLEGRO_BITMAP *mapBitmap;
 
 protected:
 		static const int tileSize = 50;
@@ -53,11 +69,19 @@ public:
 	World(void);
 	~World(void);
 	
-	void showmap();
-	bool loadmap(const char* filename);
+	void showMap();
+	ALLEGRO_BITMAP* createBitmap();
+	void drawMap();
+	bool loadMap(const char* filename);
+	bool loadTileSet(const std::string& imgName, int cellDimension, int gapX, int gapY, int offset);
 	//void Update(std::vector<std::vector<int> >& map);
 	void update();
 	void render();
+	unsigned int calcWidth() const;
+	unsigned int calcHeight() const;
+	unsigned int getWidth() const { return width; }
+    unsigned int getHeight() const { return height; }
+
 	//int setStartMapBoundaries(Rect coordBox);
 	//int setEndMapBoundaries(Rect coordBox);
 
@@ -66,7 +90,7 @@ public:
 	void setStartMapBoundaries(Rect coordinate);
 	void setEndMapBoundaries(Rect coordinate);
 
-	void setMapVisibleSize(unsigned int width, unsigned int height);
+	void setMapVisibleSize(float width, float height);
 
 	void addEntity(GameObject gameObject);
 
@@ -80,6 +104,7 @@ public:
 
 	Rect getBlockRect(){return World::blockrect;}
 	Rect getDestRect(){return World::destrect;}
+	float getMapPosX(){return mapX;}
 	void setBlockRectY(int y);
 	void setDestRectY(int y);
 	void setMapPos(float& x, float& y);

@@ -50,7 +50,8 @@ Player::Player(float x, float y, float width, float height, float velX, float ve
 
 
 
-	this->velX = 0;
+	this->box.vX = velX;
+	this->box.vY = velY;
 	this->dirX = 0;
 	this->velCamX = 0;
 
@@ -86,7 +87,8 @@ Player::~Player(void)
 
 void Player::render()
 {
-	al_draw_filled_rectangle(Character::box.x, Character::box.y,Character::box.x + Character::box.w ,Character::box.y + Character::box.h, al_map_rgba(255,0,255,100));
+	//al_draw_filled_rectangle(Character::box.x, Character::box.y,Character::box.x + Character::box.w ,Character::box.y + Character::box.h, al_map_rgba(255,0,255,100)); //works
+	al_draw_filled_rectangle(boundingBox.getX(), boundingBox.getY(),boundingBox.getX() + Character::box.w ,boundingBox.getY() + Character::box.h, al_map_rgba(255,0,255,100)); // works too 
 	//al_draw_filled_rectangle(GameObject::getCoord().x, GameObject::getCoord().y,GameObject::getCoord().x + Character::box.w ,GameObject::getCoord().y + Character::box.h, al_map_rgba(255,0,255,100));
 
 }
@@ -146,7 +148,7 @@ void Player::setPosYvel(int cVel)
 void Player::update(std::vector<std::vector<int> >& map)
 {
 	//gravity action
-	box.vY += gravity;
+	//box.vY += gravity;
 
 	if (box.vY > Character::verticalSpeedLimit){
 		box.vY = Character::verticalSpeedLimit;
@@ -250,6 +252,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 		//box.vY = 15;
 	}
 
+
 		
 
 	////####################GRAVITY AND COLICION WITH BG TILES#################BEGIN###################
@@ -283,7 +286,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 
 	//if (!nc)
 	{
-		Character::box.x += box.vX;
+		//Character::box.x += box.vX;
 		//Character::box.y += box.vY; //update makes the Player falling according to gravity speed
 		//debugMsg = "moving int the air";
 	}
@@ -293,8 +296,11 @@ void Player::update(std::vector<std::vector<int> >& map)
 	//std::cout<<"bb getY="<<boundingBox.getY()<<std::endl;
 	//std::cout<<"boxX="<<box.x<<std::endl;
 	//std::cout<<"boxY="<<box.y<<std::endl;
+	//boundingBox.setX(boundingBox.getX() + box.x);
+	//boundingBox.setY(boundingBox.getY() + box.y);
 	boundingBox.setX(boundingBox.getX() + box.x);
-	boundingBox.setX(boundingBox.getY() + box.y);
+	boundingBox.setY(boundingBox.getY() + box.y);
+
 
 	//below will make the Player start falling after jumping and hit the ground again
 	//if (!jump && box.vY < 6.5)
@@ -385,13 +391,7 @@ void Player::update(std::vector<std::vector<int> >& map)
 
 	//Character::topTileRect.x = Character::box.x;
 	//Character::topTileRect.y = Character::box.y;
-
 	
-
-
-
-
-
 }
 
 bool Player::isJumpAllowed()
@@ -407,13 +407,13 @@ bool Player::isJumpAllowed()
 void Player::moveLeft()
 {
 	//Player::dirX = -1;
-	Player::box.vX = -4;
+	Player::box.x = -box.vX;
 }
 
 void Player::moveRight()
 {
 	//Player::dirX =1;
-	Player::box.vX = 4;
+	Player::box.x = box.vX;
 }
 
 void Player::letsJump()
@@ -437,7 +437,8 @@ void Player::move()
 void Player::resetAnimation()
 {
 	//Player::dirX = 0;
-	Player::box.vX = 0;
+	//Player::box.vX = 0;
+	Player::box.x = 0;
 	//Player::Move(themap);
 }
 

@@ -47,7 +47,8 @@ public:
 	//Rect getCoord(){return Player::coord;}
 	Rect getDestRect(){return Player::destrect;}
 	Rect getRect(){return Character::box;}
-	Rect getPos(){return Player::pos;}
+	//float getPosX(){return boundingBox.getX();}
+	//float getPosY(){return boundingBox.getY();}
 	Rect getCamera(){return Player::camera;}
 	//float getX(){return Character::box.x;}
 	//float getY(){return Character::box.y;}

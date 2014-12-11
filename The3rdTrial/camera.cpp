@@ -1,20 +1,28 @@
 #include "Camera.h"
 
 
+Camera::Camera(void)
+{
+	Camera::x = 0;
+	Camera::y = 0;
+	this->position.x=0;
+	this->position.y=0;
+	this->focus.x=0;
+	this->focus.y=0;
+	this->width=0;
+	this->height=0;
+	this->focusedChar=0;
+	targetX = NULL;
+	targetY = NULL;
+	targetMode = TARGET_MODE_NORMAL;
+}
+
 Camera::Camera(float x ,float y)
 {
 	Camera::x = 0;
 	Camera::y = 0;
 }
 
-Camera::Camera(void)
-{
-	Camera::x = 0;
-	Camera::y = 0;
-	targetX = NULL;
-	targetY = NULL;
-	targetMode = TARGET_MODE_NORMAL;
-}
 
 
 Camera::~Camera(void)
@@ -52,6 +60,9 @@ void Camera::setFocusedCharacter(Character* focusedChar)
         
         focus.x = this->focusedChar->getX();
         focus.y = this->focusedChar->getY();
+		std::cout<<"focus x is="<<this->focus.x<<std::endl;
+		std::cout<<"focus y is="<<this->focus.y<<std::endl;
+
     }
 }
 
@@ -59,11 +70,11 @@ void Camera::setFocusedCharacter(Character* focusedChar)
 /**
 * Algorithm used: Tweaning -> <code>x += (target - value) * constant</code>
 */
-void Camera::update(int moveX, int moveY)
-//void Camera::update(Player* p1)
+//void Camera::update(int moveX, int moveY)
+void Camera::update()
 {
-	Camera::x += moveX;
-	Camera::y += moveY;
+	//Camera::x += moveX;
+	//Camera::y += moveY;
 	//std::cout<<"cam x is="<<this->x<<std::endl;
 	//std::cout<<"cam y is="<<this->y<<std::endl;
 
@@ -74,11 +85,15 @@ void Camera::update(int moveX, int moveY)
  //   int posy = gameobject::coord.y + focusedchar->getheight() / 2;
 
 
-	//std::cout<<"posX x is="<<posX<<std::endl;
-	//std::cout<<"posY y is="<<posY<<std::endl;
+	std::cout<<"posX x is="<<posX<<std::endl;
+	std::cout<<"posY y is="<<posY<<std::endl;
+
+	//std::cout<<"posX x is="<<focusedChar->getX()<<std::endl;
+	//std::cout<<"posY y is="<<focusedChar->getY()<<std::endl;
+
  //   
-	int spdX = focusedChar->getVelX();
-    int spdY = focusedChar->getVelY();
+	int spdX = focusedChar->getSpeedX();
+	int spdY = focusedChar->getSpeedY();
 
 	//std::cout<<"spdX x is="<<spdX<<std::endl;
 	//std::cout<<"spdY y is="<<spdY<<std::endl;
@@ -98,8 +113,8 @@ void Camera::update(int moveX, int moveY)
     
     if (spdX > 0) {
         if (posX > focus.x) {
-            position.x += spdX;
-            focus.x    += spdX;
+            position.x += spdX; //here will scroll the background
+            focus.x    += spdX; //here will scroll the background
         }
     } else {
         if (posX < focus.x) {
@@ -169,8 +184,8 @@ void Camera::setPosition(float x, float y)
 {
 	//position.x = *x;
  //   position.y = *y;
-	this->x = x;
-    this->y = y;
+	this->position.x = x;
+    this->position.y = y;
 
 }
 
@@ -194,8 +209,8 @@ float Camera::getX()
 			return *targetX - (WIDTH/2);
 		}
 	}
-	std::cout<<"cam x is="<<this->x<<std::endl;
-	std::cout<<"cam y is="<<this->y<<std::endl;
+	//std::cout<<"cam x is="<<this->x<<std::endl;
+	//std::cout<<"cam y is="<<this->y<<std::endl;
 
 	return this->x;
 }

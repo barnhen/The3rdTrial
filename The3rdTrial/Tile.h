@@ -31,6 +31,9 @@ public :
 	//int typeId;
 	Tile(float x, float y, float w, float h, int id);
 	~Tile();
+	void drawBoundingBox() const;
+
+	unsigned int getId() { return tileId; }
 
 	//Tiles(int id, int x, int y);
 	//inline Rect getBounds(){return Rect(x,y,50,50);}
