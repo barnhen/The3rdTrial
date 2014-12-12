@@ -47,7 +47,7 @@ protected:
 
 public:
 	//instantianting super class with default values
-	GameObject(void) : boundingBox(0,0,0,0,true){};
+	GameObject() : boundingBox(0,0,0,0,true){};
 
 	//instantianting super class
 	GameObject(float x ,float y ,float width, float height, float velX, float velY, bool ignoreCollision = true) 
@@ -58,7 +58,12 @@ public:
 	//void virtual Update(std::vector<std::vector<int> >& map);
 	void virtual update();
 	void virtual render();
-	void init(float x ,float y ,float width, float height, float velX, float velY);
+	//void init(float x ,float y ,float width, float height, float velX, float velY);
+
+
+
+	void setX(float x) { this->boundingBox.setX(x); }
+	void setY(float y) { this->boundingBox.setY(y); }
 
 	/*below is a constant funciton, meaning a function that will not alter any member variables of the class
 	 it belongs to. This is the style recommended to us getter, since their only purpose is to retrieve data
@@ -70,6 +75,8 @@ public:
 	float getHeight(){return this->boundingBox.getHeight();}
 	int getDirX(){return dirX;}
 	int getDirY(){return dirY;}
+
+
 
 
 	//static Rect getCoord(){return coord;}

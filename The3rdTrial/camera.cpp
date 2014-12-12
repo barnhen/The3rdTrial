@@ -29,12 +29,73 @@ Camera::~Camera(void)
 {
 }
 
+void Camera::setPosition(float x, float y)
+{
+	//position.x = *x;
+ //   position.y = *y;
+	this->position.x = x;
+    this->position.y = y;
+
+}
+
+void Camera::setFocus(float fx, float fy)
+{
+	focus.x = fx;
+    focus.y = fy;
+}
+
 
 void Camera::setSize(float width,float height)
 {
 	this->width  = width;
     this->height = height;
 }
+
+void Camera::setFocusedCharacter(Character* focusedChar)
+{
+	if (focusedChar) 
+	{
+        this->focusedChar = focusedChar;
+        
+        focus.x = this->focusedChar->getX();
+        focus.y = this->focusedChar->getY();
+		std::cout<<"focus x is="<<this->focus.x<<std::endl;
+		std::cout<<"focus y is="<<this->focus.y<<std::endl;
+
+    }
+}
+
+Rect Camera::getPosition() const
+{
+	return position;
+}
+
+Rect Camera::getFocus() const
+{
+	return this->focus;
+}
+
+float Camera::getWidth() const
+{
+	return width;
+}
+
+float Camera::getHeight() const
+{
+	return height;
+}
+
+int Camera::getPosX() const
+{
+	return this->posX;
+} //barnhen
+
+int Camera::getPosY() const
+{
+	return this->posY;
+} //barnhen
+
+
 
 const char* Camera::getCameraTargetMode() const
 {
@@ -52,19 +113,6 @@ const char* Camera::getCameraTargetMode() const
 	}
 }
 
-void Camera::setFocusedCharacter(Character* focusedChar)
-{
-	if (focusedChar) 
-	{
-        this->focusedChar = focusedChar;
-        
-        focus.x = this->focusedChar->getX();
-        focus.y = this->focusedChar->getY();
-		std::cout<<"focus x is="<<this->focus.x<<std::endl;
-		std::cout<<"focus y is="<<this->focus.y<<std::endl;
-
-    }
-}
 
 
 /**
@@ -78,15 +126,15 @@ void Camera::update()
 	//std::cout<<"cam x is="<<this->x<<std::endl;
 	//std::cout<<"cam y is="<<this->y<<std::endl;
 
-    int posX = focusedChar->getX() + focusedChar->getWidth() / 2;
-    int posY = focusedChar->getY() + focusedChar->getHeight() / 2;
+    posX = focusedChar->getX() + focusedChar->getWidth() / 2;
+    posY = focusedChar->getY() + focusedChar->getHeight() / 2;
 
 	//int posx = gameobject::coord.x + focusedchar->getwidth() / 2;
  //   int posy = gameobject::coord.y + focusedchar->getheight() / 2;
 
 
-	std::cout<<"posX x is="<<posX<<std::endl;
-	std::cout<<"posY y is="<<posY<<std::endl;
+	//std::cout<<"posX x is="<<posX<<std::endl;
+	//std::cout<<"posY y is="<<posY<<std::endl;
 
 	//std::cout<<"posX x is="<<focusedChar->getX()<<std::endl;
 	//std::cout<<"posY y is="<<focusedChar->getY()<<std::endl;
@@ -180,25 +228,7 @@ void Camera::update()
 	////################OLD Player END
 }
 
-void Camera::setPosition(float x, float y)
-{
-	//position.x = *x;
- //   position.y = *y;
-	this->position.x = x;
-    this->position.y = y;
 
-}
-
-void Camera::setFocus(float fx, float fy)
-{
-	focus.x = fx;
-    focus.y = fy;
-}
-
-Rect Camera::getFocus()
-{
-	return this->focus;
-}
 
 float Camera::getX()
 {
@@ -226,6 +256,9 @@ float Camera::getY()
 	}
 	return this->y;
 }
+
+
+
 
 void Camera::setTarget(float* x, float* y)
 {

@@ -29,6 +29,7 @@ protected:
 	Rect middleLeftTileRect; // the tile that's middle left of the char
 	Rect middleRightTileRect; // the tile that's middle right of the char
 	Rect collisionRect; // the tile that's middle right of the char
+	//Rect center;
 public:
 	Character(float x, float y, float width, float height, float velX, float velY, float maxVelY, ALLEGRO_BITMAP *pImg);
 	~Character(void);
@@ -44,6 +45,8 @@ public:
 	float getHeight(){return box.h;}
 	//float getVelX(){return box.vX;}
 	//float getVelY(){return box.vY;}
+
+
 	float getSpeedX(){return box.x;}
 	float getSpeedY(){return box.y;}
 
@@ -53,7 +56,22 @@ public:
 	bool isCharBoundingBoxVisible() {return visibleBoundingBox;}
 
 	void setCollisionRect();
+
+	//void setPos(float x, float y) { setX(x); setY(y); }
+	//void setX(float x) { this->center.x = x; }
+	//void setY(float y) { this->center.y = y; }
+
 	void setBoundingBoxes();
+
+	void draw() const;
+	virtual void implementDraw() const     = 0;
+	void implementUpdate();
+
+	void updateBoundingBoxes();
+	void moveLeft();
+	void moveRight();
+	void resetAnimation();
+
 
 	Rect getBottomTileRect() {return bottomTileRect;}
 	Rect getTopTileRect() {return topTileRect;}

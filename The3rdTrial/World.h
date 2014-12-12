@@ -25,6 +25,7 @@ private:
 	unsigned int rows,cols;
 	std::vector<std::vector<int> > map;
 	std::vector<Tile*> cells;
+	std::vector<Character*>  chars;
 	std::vector<ALLEGRO_BITMAP*> tiles;
 	bool showGrid;
 	int defaultTileId;
@@ -90,7 +91,7 @@ public:
 	void setStartMapBoundaries(Rect coordinate);
 	void setEndMapBoundaries(Rect coordinate);
 
-	void setMapVisibleSize(float width, float height);
+	void setMapVisibleSize(unsigned int width, unsigned int height);
 
 	void addEntity(GameObject gameObject);
 
@@ -110,7 +111,7 @@ public:
 	void setMapPos(float& x, float& y);
 	// will modify xVal and yVal variabes from PhysicsComponents
 	void GetCurrentTileValues(float xPos, float yPos, int& xVal, int& yVal);
-	void addPlayer(Player *p);
+	void addCharacter(Player *player);
 
 	//std::vector<std::vector<int> >& GetMap(){return map;}
 	std::vector<std::vector<int> >& getMap() {return map;}

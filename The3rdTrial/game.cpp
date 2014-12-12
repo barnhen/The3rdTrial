@@ -88,12 +88,12 @@ void Game::showDebugMode(void)
 	al_draw_textf(font18, al_map_rgb(255, 255, 0), 5, 5, 0, "FPS: ", fps); // display Game FPS on screen
 	al_draw_textf(font18, al_map_rgb(255, 255, 0), 105, 5, 0, "STATE: %d", state); // display state
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "cam Focus x: %.2f", cam.getFocus().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 25, 0, "cam Pos X: %.2f", cam.getPosition().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 25, 0, "cam X: %.2f", cam.getPosition().x); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 25, 0, "Player posX: %.0f", player1->getX()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 25, 0, "Player posY: %.0f", player1->getY()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "Player box x: %.2f", player1->getRect().x);
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 35, 0, "Player box y: %.2f", player1->getRect().y);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "Player cam x: %.2f", player1->getCamera().x);
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 35, 0, "CAM POSX: %.d", cam.getPosX());
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 35, 0, "Player x vel: %.2f", player1->getRect().vX);
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 45, 0, "Player y vel: %.2f", player1->getRect().vY);
 
@@ -109,8 +109,8 @@ void Game::showDebugMode(void)
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %.2f", bg->getDestRect().y);
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 55, 0, "collision time: %.2f", player1->getCollisionTime());
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Cam x: %.2f", cam.getX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Cam y: %.2f", cam.getY()); 
+	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Cam x: %.2f", cam.getX()); 
+	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Cam y: %.2f", cam.getY()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 65, 0, "Cam pos x: %.2f", cam.getPosition().x); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 65, 0, "Cam pos y: %.2f", cam.getPosition().y); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 65, 0, "Cam target mode: %s", cam.getCameraTargetMode());
@@ -216,12 +216,12 @@ void Game::initializeGameEngine ()
 
 	cam.setSize(WIDTH,HEIGHT);
 
-	player1 = new Player(180,0,40,64,4,0,8, PlayerImage);
+	player1 = new Player(180,0,40,64,4.0,0,8, PlayerImage);
 	std::cout<<"Player loaded"<<std::endl;
 	//will call the init() method from Character which is superclass of player
 	player1->init();
 	//player1->init(380,0,40,64,0,0,8); //starting x,y, width, height, vX and vy
-	bg->addPlayer(player1);
+	
 
 	objects.push_back(player1);
 
@@ -230,6 +230,8 @@ void Game::initializeGameEngine ()
 	std::cout<<"Camera loaded"<<std::endl;
 
 	bg->setMapVisibleSize(cam.getWidth(), cam.getHeight());
+
+	bg->addCharacter(player1);
 
 	//##################################################################################################
 	// Here will define at what point the program will start at: Tile screen, menu, gameplay, credits...
@@ -342,8 +344,8 @@ void Game::processGameEngine()
 			//	(*iter)->Update();
 			//}
 			//bg->update();
-			player1->update(bg->getMap());
-			//player1->update();
+			//player1->update(bg->getMap());
+			player1->update();
 			
 			cam.update();
 			//cam.update(player1->getRect().x, player1->getRect().y);

@@ -34,9 +34,10 @@ public:
 	~Player(void);
 
 	//void init(ALLEGRO_BITMAP *pImg);
-	void update(std::vector<std::vector<int> >& map);
+	//void update(std::vector<std::vector<int> >& map);
 	//void update();
 	void render();	
+	virtual void implementDraw() const;
 	//float getXVel(){return Player::velX;}
 	//float getYVel(){return Player::velY;}
 	float getPosXVel(){return Player::velPosX;}
@@ -72,9 +73,9 @@ public:
 	//void MoveRight(std::vector<std::vector<int> > themap);
 	//void ResetAnimation(std::vector<std::vector<int> > themap);
 	//void Move(std::vector<std::vector<int> >& map);
-	void moveLeft();
-	void moveRight();
-	void resetAnimation();
+	//void moveLeft();
+	//void moveRight();
+	//void resetAnimation();
 	void move();
 
 	const char* getDebugPlayerMov(){return Player::debugMsg;}

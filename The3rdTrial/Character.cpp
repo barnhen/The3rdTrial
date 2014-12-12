@@ -150,9 +150,292 @@ void Character::handleInput(const ALLEGRO_EVENT& ev)
 
 void Character::update()
 {
+	implementUpdate();
+	updateBoundingBoxes();
+}
+
+void Character::draw() const
+{
+	 if (loaded) {
+        implementDraw();
+    }
+}
+
+void Character::implementUpdate()
+{
+		//gravity action
+	//box.vY += gravity;
+
+	if (box.vY > Character::verticalSpeedLimit){
+		box.vY = Character::verticalSpeedLimit;
+	}
+
+	//background bg;
+	//const std::vector<std::vector<int> > map = background::GetInstance().GetMap();
+	//int test = background::GetInstance().GetInt();
+	//theBg->GetMap();
+
+	//std::vector<std::vector<int> > map =  World::getInstance().getMap();
+	
+	//##############################key handling ################################################
+	//LEFT 
+	if(keys[LEFT])
+	{
+		//moveLeft();
+		box.x = -box.vX;
+
+		//what if the Player wants to jump while moving?
+		if(keys[SPACE])
+		{
+			//if (ground && !jump)
+			{
+				//letsJump();
+			}
+			//if (isJumpAllowed()){
+			//}
+			
+		} //jumping
+	}
+	//or RIGHT
+	else if(keys[RIGHT])
+	{
+		//dir = 1;
+		//moveRight();
+		box.x = box.vX;
+				
+		//what if the Player wants to jump while moving?
+		if(keys[SPACE])
+		{
+		//if (isJumpAllowed()){
+			//if (ground && !jump)
+			{
+				//letsJump();
+			} //jumping
+		}
+	}
+	//or jumping
+	else if(keys[SPACE])
+	{
+		//if (isJumpAllowed())
+		//if (ground)
+		{
+			//letsJump();
+			//what if the Player wants move right while jumping?
+			if(keys[RIGHT])
+			{
+				//dir = 1;
+				//moveRight();
+			}
+			//what if the Player wants move left while jumping?
+			else if(keys[LEFT])
+			{
+				//dir = -1;
+				//moveLeft();
+			}
+		}
+	}
+
+	//or default position
+	else
+	{
+		//dir = 0;
+		resetAnimation();
+	}
+
+
+	
+	//Character::updatePhysics();
+	////##################Player MOVING#####################################END##################
+
+	//	if (!nc && !jump) // not colliding nor jumping
+	//{
+	//	box.vY = 6.5; //will make gravity to fall the Player faster
+	//	
+
+	//}
+	//
+	//if(jump && box.vY < -7.5)
+	//{
+	//	box.vY += gravity;
+	//}
+	//else
+	//{
+	//	jump = false;
+	//}
+
+	//if (box.vY > 8)
+	//{
+	//	//box.vY = 15;
+	//}
+
+
+		
+
+	////####################GRAVITY AND COLICION WITH BG TILES#################BEGIN###################
+	//BoundingBox bb;
+
+	//int start = ( GameObject::coord.x - ((int)GameObject::coord.x % theBg->getTileSize())) / theBg->getTileSize();
+	//int end = (GameObject::coord.x + GameObject::coord.w + (theBg->getTileSize() - (int)(GameObject::coord.x + GameObject::coord.w) % theBg->getTileSize())) / 50;
+
+
+	//if (start < 0)
+	//{
+	//	start=0;
+	//}
+	//if (end > map[0].size())
+	//{
+	//	end = map[0].size();
+	//}
+				////####### WILL UPDATECharacter::box MOVEMENT###############
+	//// means he is either falling or started falling
+	//if (nc && jump)	jump=false;
+
+	//if(box.vY < -17)
+	//{
+	//	box.vY = -17;
+	//}
+
+	//if (!ground)
+	//{
+	//	box.vY+=gravity; //will make the jump last
+	//}
+
+	//if (!nc)
+	{
+		//Character::box.x += box.vX;
+		//Character::box.y += box.vY; //update makes the Player falling according to gravity speed
+		//debugMsg = "moving int the air";
+	}
+
+	//Character::setBoundingBoxes();
+	//std::cout<<"bb getX="<<boundingBox.getX()<<std::endl;
+	//std::cout<<"bb getY="<<boundingBox.getY()<<std::endl;
+	//std::cout<<"boxX="<<box.x<<std::endl;
+	//std::cout<<"boxY="<<box.y<<std::endl;
+	//boundingBox.setX(boundingBox.getX() + box.x);
+	//boundingBox.setY(boundingBox.getY() + box.y);
+	//std::cout<<"box.x"<<box.x<<std::endl;
+	//std::cout<<"bb.get_x() + box.x = "<<boundingBox.getX()<<" + "<<box.x<<" = "<<boundingBox.getX() + box.x<<std::endl;
+	boundingBox.setX(boundingBox.getX() + box.x);
+	boundingBox.setY(boundingBox.getY() + box.y);
+
+
+	//below will make the Player start falling after jumping and hit the ground again
+	//if (!jump && box.vY < 6.5)
+	//{
+	//	//SetYvel(velY++);
+	//	//box.vY+=1; //will make the jump last
+	//	box.vY = 6.5;
+	//}
+	//if (!ground)
+	//{
+	//	box.vY+=gravity; //will make the jump last
+	//}
+
+
+	//max vel downword
+	//if(box.vY > 15)
+	//{
+	//	box.vY = 15;
+	//}
+
+	////####################GRAVITY AND COLICION WITH BG TILES#################END###################
+	//
+	////####### WILL UPDATECharacter::box MOVEMENT###############
+	//Character::box.x += GameObject::velX * Player::dirX;
+	////box.x += 4 * Player::dirX;
+	////////jumping
+	//Character::box.x += box.vX;
+
+	//Character::box.y += box.vY; //update makes the Player falling according to gravity speed
+	//	
+	//if (!ground)
+	//{
+	//	//Character::box.y+=4;
+		//Player::coord.y += box.vY; // this point will scroll the map
+	//	//Player::coord.y--; // this point will scroll the map
+	//}
+	//
+	////####### WILL UPDATE ABSOLUTE MAP COORDINATES###############
+	////if (isScrolling==1) //not scrolling
+	//{
+		//Player::coord.x += Player::velCoordX * Player::dirX;
+		//Player::coord.x += 4 * Player::dirX;
+		//std::cout<<"coord.x is "<<coord.x<<std::endl;
+	//	//std::cout<<"velCoordX is "<<velCoordX<<std::endl;
+	//	//Player::coord.y += Player::velCoordY * Player::dirY;
+
+	//}
+	//if (!ground)
+	//{
+	//	//Player::coord.y += velCoordX;
+	//	/*background bg*/;
+	//	//int bgCoord = bg.GetDestRect().y;
+	//	//bgCoord +=1;
+	//	//int bgCoord = background::GetBlockRect().y;
+	//	//GameObject::coord.y += 1;
+	//	//theBg->SetDestRectY(+1);
+	//	//bgCoord +=1;
+
+	//}
+	////####### WILL UPDATE ABSOLUTE POSITION COORDINATES###############
+	//Player::pos.x += Player::velPosX * Player::dirX;
+	////Player::camera.x += Player::velCamX * Player::dirX;
+	////Player::camera.y += Player::velCamY;
+	////Player::camera.y += Player::velY;
+
+	//Character::setCollisionRect();
+
+	// Get the tiles that're directly above and beneath the robot's feet
+	//int tileWidth = Character::box.w;
+ //   int tileHeight = Character::box.h;
+	//Character::bottomTileRect.w = Character::topTileRect.w = tileWidth;
+	//Character::bottomTileRect.h = Character::topTileRect.h = tileHeight;
+	//// Get the bottom tile
+	////int row = (Character::getCollisionRect().y + Character::getCollisionRect().h)/tileHeight;
+	////int column = (Character::getCollisionRect().x + Character::getCollisionRect().w/2)/tileWidth;
+	////
+	////Character::bottomTileRect.x = column*tileWidth;
+	////Character::bottomTileRect.y = row*tileHeight;
+	//Character::bottomTileRect.x = Character::box.x;
+	//Character::bottomTileRect.y = Character::box.y;
+
+	//// Get the top tile
+	////row = (Character::getCollisionRect().y)/tileHeight;
+	////column = (Character::getCollisionRect().x + Character::getCollisionRect().w/2)/tileWidth;
+
+	////Character::topTileRect.x = column*tileWidth;
+	////Character::topTileRect.y = row*tileHeight;
+
+	//Character::topTileRect.x = Character::box.x;
+	//Character::topTileRect.y = Character::box.y;
 
 }
 
+void Character::moveLeft()
+{
+	//Player::dirX = -1;
+	this->box.x = -box.vX;
+}
+
+void Character::moveRight()
+{
+	//Player::dirX =1;
+	this->box.x = box.vX;
+}
+
+
+void Character::resetAnimation()
+{
+	//Player::dirX = 0;
+	//Player::box.vX = 0;
+	this->box.x = 0;
+	//Player::Move(themap);
+}
+
+
+void Character::updateBoundingBoxes()
+{}
 
 void Character::updatePhysics()
 {

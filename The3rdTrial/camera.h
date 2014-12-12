@@ -22,6 +22,8 @@ private:
 	float* targetX;
 	float* targetY;
 
+	int posX; 
+	int posY; 
 	Character *focusedChar;
 
 	Rect position;
@@ -43,14 +45,20 @@ public:
 	void setTarget(float* x, float* y);
     void setFocus(float fx, float fy);
 	void update();
+	
 	//void update(int moveX, int moveY);
 	float getX();
 	float getY();
-	Rect getFocus();
+
+	int getPosX() const; //barnhen
+	int getPosY() const; //barnhen
+
+	Rect getFocus() const;
+	Rect getPosition() const;
 	const char* getCameraTargetMode() const;
-	inline float getWidth(){return width;}
-	inline float getHeight(){return height;}
-	Rect getPosition() {return position;}
+	float getWidth() const;
+	float getHeight() const;
+	//Rect getPosition() {return position;}
 
 };
 

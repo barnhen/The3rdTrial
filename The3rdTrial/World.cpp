@@ -23,6 +23,12 @@ World::World(void)
 	//tile.w = tileSize;
 	//tile.h = tileSize;
 	defaultTileId = 0;
+	mapX = 0;
+	mapY = 0;
+	visibleHeight = 0;
+	visibleWidth = 0;
+	width = 0;
+	height =0;
 
 }
 
@@ -66,6 +72,10 @@ void World::setMapPos(float& x, float& y)
     
     mapX = x;
     mapY = y;
+
+	//std::cout<<"mapX is="<<mapX<<std::endl;
+	//std::cout<<"mapY is="<<mapY<<std::endl;
+
 
 }
 
@@ -408,9 +418,13 @@ COLLISION_TYPE World::collisionLookup(int TileNum)
 //}
 //
 
-void World::addPlayer(Player *p)
+void World::addCharacter(Player *player)
 {
-	this->player =p;
+	if (player)
+	{
+		chars.push_back(player);
+	}
+	//this->player =p;
 }
 
 
@@ -560,7 +574,7 @@ void World::showMap()
 	}
 }
 
-void World::setMapVisibleSize(float width, float height)
+void World::setMapVisibleSize(unsigned int width,unsigned int height)
 {
 	visibleWidth = width;
     visibleHeight = height;
@@ -634,6 +648,11 @@ void World::render()
 
 	//will update only tileset, not background
 	showMap();
+
+	for (unsigned int i = 0; i < chars.size(); ++i) {
+	    chars[i]->draw();
+    }
+
 }
 
 

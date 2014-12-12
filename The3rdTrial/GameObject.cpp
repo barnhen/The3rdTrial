@@ -13,21 +13,21 @@ GameObject::~GameObject(void)
 
 }
 
-void GameObject::init(float x ,float y ,float width, float height, float velX, float velY)
-{
-	this->coord.x = x;
-	this->coord.y = y;
-	this->coord.h = height;
-	this->coord.w = width;
-	this->coord.vX = velX;
-	this->coord.vY = velY;
-	dirX = 0;
-	dirY = 0;
-
-	//boundingBox.init(coord.x,coord.y,coord.w,coord.h,coord.vX,coord.vY);
-	//world.addEntity();
-
-}
+//void GameObject::init(float x ,float y ,float width, float height, float velX, float velY)
+//{
+//	this->coord.x = x;
+//	this->coord.y = y;
+//	this->coord.h = height;
+//	this->coord.w = width;
+//	this->coord.vX = velX;
+//	this->coord.vY = velY;
+//	dirX = 0;
+//	dirY = 0;
+//
+//	//boundingBox.init(coord.x,coord.y,coord.w,coord.h,coord.vX,coord.vY);
+//	//world.addEntity();
+//
+//}
 
 
 void GameObject::update()
