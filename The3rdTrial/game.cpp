@@ -40,7 +40,7 @@ ALLEGRO_TIMER *timer;
 ALLEGRO_BITMAP *image = NULL;
 ALLEGRO_FONT *font18 = NULL;
 ALLEGRO_FONT *font11 = NULL;
-ALLEGRO_BITMAP *bgImage = NULL;
+ALLEGRO_BITMAP *worldImage = NULL;
 ALLEGRO_BITMAP *PlayerImage = NULL;
 //ALLEGRO_BITMAP *tileSheet=NULL;
 ALLEGRO_EVENT ev;
@@ -49,7 +49,7 @@ ALLEGRO_EVENT ev;
 //==============================================
 //PROJECT VARIABLES
 //==============================================
-World *bg;
+World world;
 Player *player1; 
 Camera cam;
 
@@ -88,7 +88,7 @@ void Game::showDebugMode(void)
 	al_draw_textf(font18, al_map_rgb(255, 255, 0), 5, 5, 0, "FPS: ", fps); // display Game FPS on screen
 	al_draw_textf(font18, al_map_rgb(255, 255, 0), 105, 5, 0, "STATE: %d", state); // display state
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 25, 0, "cam Focus x: %.2f", cam.getFocus().x); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 25, 0, "cam X: %.2f", cam.getPosition().x); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 150, 25, 0, "camera is moving with X: %.2f", cam.getPosition().x); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 25, 0, "Player posX: %.0f", player1->getX()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 450, 25, 0, "Player posY: %.0f", player1->getY()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 35, 0, "Player box x: %.2f", player1->getRect().x);
@@ -103,11 +103,13 @@ void Game::showDebugMode(void)
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 45, 0, "Player desH: %.2f", player1->getDestRect().h);
 
 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "map pos x: %.2f", bg->getMapPosX()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "bg map width: %i", bg->getWidth()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "bg map height: %.i", bg->getHeight()); 
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "bg blockrect y: %.2f", bg->getDestRect().y);
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 55, 0, "collision time: %.2f", player1->getCollisionTime());
+	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 55, 0, "map is moving with mapX x: %.2f", world.getMapPosX()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 55, 0, "world map width: %i", world.getWidth()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 200, 55, 0, "world map height: %.i", world.getHeight()); 
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 55, 0, "world blockrect y: %.2f", world.getDestRect().y);
+	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 55, 0, "collision time: %.2f", player1->getCollisionTime());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 55, 0, "map is moving with mapX x: %.2f", world.getMapPosX()); 
+
 
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 65, 0, "Cam x: %.2f", cam.getX()); 
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 65, 0, "Cam y: %.2f", cam.getY()); 
@@ -125,8 +127,8 @@ void Game::showDebugMode(void)
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 85, 0, "Scrolling: %s", player1->getIsScrolling()?"true":"false"); 
 	//al_draw_textf(font11, al_map_rgb(255, 255, 0), 100, 85, 0, "Camera X: %f", cam.getX()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 300, 85, 0, "Player coord X: %.0f", player1->getX());
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 95, 0, "Player bg start bound: %i", bg->getStartMapBoundaries());
-	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 95, 0, "Player bg end bound: %i", bg->getEndMapBoundaries());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 95, 0, "Player world start bound: %i", world.getStartMapBoundaries());
+	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 95, 0, "Player world end bound: %i", world.getEndMapBoundaries());
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 5, 105, 0, player1->getDebugPlayerMov()); 
 	al_draw_textf(font11, al_map_rgb(255, 255, 0), 400, 105, 0, player1->getDebugPlayerCollision()); 
 
@@ -184,13 +186,13 @@ void Game::initializeGameEngine ()
 
 
 
-	//bgImage = al_load_bitmap("image\\background.png");
-	//if(!bgImage){
+	//worldImage = al_load_bitmap("image\\background.png");
+	//if(!worldImage){
 	//	std::cout<<"Couldn't load tile image"<<std::endl;
 	//}
 	//else
 	//{
-	//	std::cout<<"loaded bg image"<<std::endl;
+	//	std::cout<<"loaded world image"<<std::endl;
 	//}
 
 	PlayerImage = NULL;
@@ -201,37 +203,39 @@ void Game::initializeGameEngine ()
 	//}
 	//else
 	//{
-	//	std::cout<<"loaded bg image"<<std::endl;
+	//	std::cout<<"loaded world image"<<std::endl;
 	//}
 
-	//bg = new World(tileSheet,"map/map.map", bgImage);
-	bg = new World();
-	if (!bg->loadMap("map/map.map"))
+	//world = new World(tileSheet,"map/map.map", worldImage);
+	//world = new World();
+	//if (!world.loadMap("map/map.map"))
+	if (!world.load_map("map/map.ini"))
+
 	{
 		std::cout << "error loading map" << std::endl;
         std::exit(1);
 	}
 	std::cout<<"stage loaded"<<std::endl;
-	//objects.push_back(bg);
+	//objects.push_back(world);
 
 	cam.setSize(WIDTH,HEIGHT);
 
-	player1 = new Player(180,0,40,64,4.0,0,8, PlayerImage);
+	player1 = new Player(30,0,40,64,4.0,0,8, PlayerImage);
 	std::cout<<"Player loaded"<<std::endl;
 	//will call the init() method from Character which is superclass of player
 	player1->init();
 	//player1->init(380,0,40,64,0,0,8); //starting x,y, width, height, vX and vy
 	
+	cam.setFocusedCharacter(player1);
 
 	objects.push_back(player1);
 
 	//cam = new Camera(0,0);
-	cam.setFocusedCharacter(player1);
 	std::cout<<"Camera loaded"<<std::endl;
 
-	bg->setMapVisibleSize(cam.getWidth(), cam.getHeight());
-
-	bg->addCharacter(player1);
+	world.set_always_redraw(true);
+	world.setMapVisibleSize(cam.getWidth(), cam.getHeight());
+	world.addCharacter(player1);
 
 	//##################################################################################################
 	// Here will define at what point the program will start at: Tile screen, menu, gameplay, credits...
@@ -267,7 +271,7 @@ void Game::shutdownGameEngine()
 	}
 
 	al_destroy_bitmap(image);
-	al_destroy_bitmap(bgImage);
+	al_destroy_bitmap(worldImage);
 	//al_destroy_bitmap(tileSheet);
 	al_destroy_bitmap(PlayerImage);
 	al_destroy_font(font18);
@@ -343,8 +347,8 @@ void Game::processGameEngine()
 			//{
 			//	(*iter)->Update();
 			//}
-			//bg->update();
-			//player1->update(bg->getMap());
+			//world.update();
+			//player1->update(world.getMap());
 			player1->update();
 			
 			cam.update();
@@ -355,9 +359,9 @@ void Game::processGameEngine()
 			cameraFocus.x = 0.0;
 			cameraFocus.y = 0.0;
 
-			//update camera position and focus (respecting the x and y returned by bg::setMapPos)
-            //bg->setMapPos(cameraPos.x, cameraPos.y);
-			bg->setMapPos(cameraPos.x, cameraPos.y);
+			//update camera position and focus (respecting the x and y returned by world::setMapPos)
+            //world.setMapPos(cameraPos.x, cameraPos.y);
+			world.setMapPos(cameraPos.x, cameraPos.y);
 
 			//std::cout<<"cameraPos.x is="<<cameraPos.x<<std::endl;
 			//std::cout<<"cameraPos.y is="<<cameraPos.y<<std::endl;
@@ -379,7 +383,8 @@ void Game::processGameEngine()
 			//al_draw_textf(font18, al_map_rgb(255, 0, 255), 5, 5, 0, "FPS: %i", gameFPS); // display Game FPS on screen
 
 			
-			bg->render();
+			//world.render(); // to uncomment
+			world.draw(); //barnhen to uncomment
 			for(iter = objects.begin(); iter != objects.end(); ++iter)
 					(*iter)->render();
 			//al_draw_bitmap_region(image, curFrame * frameWidth,0, frameWidth, frameHeight, x,y,0);
@@ -398,7 +403,7 @@ void Game::processGameEngine()
 				al_draw_filled_rectangle(player1->getBottomTileRect().x, player1->getBottomTileRect().y,player1->getBottomTileRect().x + player1->getBottomTileRect().w ,player1->getBottomTileRect().y + player1->getBottomTileRect().h, al_map_rgba(0,0,255,100));
 				al_draw_filled_rectangle(player1->getMiddleLeftTileRect().x, player1->getMiddleLeftTileRect().y,player1->getMiddleLeftTileRect().x + player1->getMiddleLeftTileRect().w ,player1->getMiddleLeftTileRect().y + player1->getMiddleLeftTileRect().h, al_map_rgba(255,0,0,100));
 				al_draw_filled_rectangle(player1->getMiddleRightTileRect().x, player1->getMiddleRightTileRect().y,player1->getMiddleRightTileRect().x + player1->getMiddleRightTileRect().w ,player1->getMiddleRightTileRect().y + player1->getMiddleRightTileRect().h, al_map_rgb(0,95,0));
-				al_draw_filled_rectangle(bg->getBlockRect().x, bg->getBlockRect().y,bg->getBlockRect().x + bg->getBlockRect().w ,bg->getBlockRect().y + bg->getBlockRect().h, al_map_rgb(95,95,0));
+				al_draw_filled_rectangle(world.getBlockRect().x, world.getBlockRect().y,world.getBlockRect().x + world.getBlockRect().w ,world.getBlockRect().y + world.getBlockRect().h, al_map_rgb(95,95,0));
 				//SDL_SetRenderDrawColor(mRenderer, 255, 0, 0, 255);
 				//SDL_RenderFillRect(mRenderer, &mRobot->GetBottomTileRect());
 				//SDL_SetRenderDrawColor(mRenderer, 150, 0, 0, 255);

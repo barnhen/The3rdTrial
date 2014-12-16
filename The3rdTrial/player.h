@@ -15,6 +15,7 @@ private:
 	bool ground, jump;
 	bool nc; // non collision	
 	float gravity;
+	virtual void implementUpdate();
 
 protected:
 	Rect destrect;
@@ -36,6 +37,7 @@ public:
 	//void init(ALLEGRO_BITMAP *pImg);
 	//void update(std::vector<std::vector<int> >& map);
 	//void update();
+	
 	void render();	
 	virtual void implementDraw() const;
 	//float getXVel(){return Player::velX;}

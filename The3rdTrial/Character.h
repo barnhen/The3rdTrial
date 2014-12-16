@@ -30,6 +30,9 @@ protected:
 	Rect middleRightTileRect; // the tile that's middle right of the char
 	Rect collisionRect; // the tile that's middle right of the char
 	//Rect center;
+	virtual void implementDraw() const     = 0;
+	virtual void implementUpdate() =0;
+
 public:
 	Character(float x, float y, float width, float height, float velX, float velY, float maxVelY, ALLEGRO_BITMAP *pImg);
 	~Character(void);
@@ -64,8 +67,7 @@ public:
 	void setBoundingBoxes();
 
 	void draw() const;
-	virtual void implementDraw() const     = 0;
-	void implementUpdate();
+	//void implementUpdate();
 
 	void updateBoundingBoxes();
 	void moveLeft();

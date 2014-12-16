@@ -34,6 +34,7 @@ World::World(void)
 
 World::~World(void)
 {
+	this->close_map(); //###########################################2ND MAP STRATEGY
 }
 
 void World::addEntity(GameObject gameObject)
@@ -79,6 +80,263 @@ void World::setMapPos(float& x, float& y)
 
 }
 
+
+//###############################################################################################################################
+//###########################################2ND MAP STRATEGY BEGIN##############################################################
+//###############################################################################################################################
+void World::close_map() {
+    cells.clear();
+    for (unsigned int i = 0; i < tiles.size(); ++i) {
+        if (tiles[i]) al_destroy_bitmap(tiles[i]);
+        tiles.clear();
+    }
+    
+    if (mapbmp) al_destroy_bitmap(mapbmp);
+}
+
+bool World::read_tileset_information(const ALLEGRO_CONFIG *config) {
+    const char* tileset_file = al_get_config_value(config, "tileset", "tileset_file");
+    if (!tileset_file) {
+        std::cout << "tileset_file key doesn't exist" << std::endl;
+        return false;
+    }
+    
+    const char *dimension = al_get_config_value(config, "tileset", "tile_dimension");
+    if (!dimension) {
+        std::cout << "tile_dimension key doesn't exist" << std::endl;
+        return false;
+    }
+    
+    //gap_x and gap_y are optional keys.
+    const char *gap_x = al_get_config_value(config, "tileset", "tile_horizontal_gap");
+    if (!gap_x) {
+        std::cout << "tile_horizontal_gap key doesn't exist" << std::endl;
+        gap_x = new char[2];
+        gap_x = "1";
+    }
+
+    const char *gap_y = al_get_config_value(config, "tileset", "tile_vertical_gap");
+    if (!gap_y) {
+        std::cout << "tile_vertical_gap key doesn't exist" << std::endl;
+        gap_y = new char[2];
+        gap_y = "1";
+    }
+    
+    const char *offset = al_get_config_value(config, "tileset", "offset");
+    if (!offset) {
+        std::cout << "offset key doesn't exist" << std::endl;
+        offset = new char[2];
+        offset = "0";
+    }
+
+    return this->load_tileset(tileset_file, 
+                              std::atoi(dimension), 
+                              std::atoi(gap_x), 
+                              std::atoi(gap_y), 
+                              std::atoi(offset));
+}
+
+ALLEGRO_BITMAP* World::create_map_bitmap() {
+    int width  = getWidth();
+    int height = getHeight();
+
+    ALLEGRO_BITMAP *bmp = al_create_bitmap(width, height);
+    ALLEGRO_BITMAP *old = al_get_target_bitmap();
+    
+    al_set_target_bitmap(bmp);
+
+    for (unsigned int index = 0; index < cells.size(); ++index) {
+        Tile *t = cells[index];
+        al_draw_bitmap(tiles[t->getId()], t->getX(), t->getY(), 0);
+        if (show_grid) {
+			cells[index]->drawBoundingBox();
+        }
+    }
+
+    al_set_target_bitmap(old);
+    al_save_bitmap("testmapa.png", bmp);
+    return bmp;
+}
+
+void World::toggle_grid() {
+    show_grid = !show_grid;
+    must_redraw = true;
+}
+
+
+bool World::load_map(const std::string& mapname) {
+    //closes previously loaded map
+    close_map();
+
+    //load map
+    ALLEGRO_CONFIG *map_config = al_load_config_file(mapname.c_str());
+    if (!map_config) {
+        std::cout << "error loading config file for map" << std::endl;
+        return false;
+    }
+    
+    if (!read_tileset_information(map_config)) {
+        std::cout << "error reading tileset information" << std::endl;
+        return false;
+    };
+    
+    const char *number_of_rows = al_get_config_value(map_config, "map", "number_of_rows");
+    if (!number_of_rows) {
+        std::cout << "number_of_rows key doesn't exist" << std::endl;
+        return false;
+    }
+    
+    const char *number_of_cols = al_get_config_value(map_config, "map", "number_of_cols");
+    if (!number_of_cols) {
+        std::cout << "number_of_cols key doesn't exist" << std::endl;
+        return false;
+    }
+    
+    const char *default_tileid = al_get_config_value(map_config, "map", "default_tile_id");
+    
+    rows            = std::atoi(number_of_rows);
+    cols            = std::atoi(number_of_cols);
+	defaultTileId = std::atoi(default_tileid);
+
+	std::cout << "rows=" <<rows<< std::endl;
+	std::cout << "cols=" <<cols<< std::endl;
+	std::cout << "default_tile_id=" <<defaultTileId<< std::endl;
+    
+    if (!rows || !cols) {
+        std::cout << "invalid row / column value" << std::endl;
+        return false;
+    }
+    
+    int pos_y = 0;
+    
+    // read each cell's data
+    for (unsigned int i = 0; i < rows; ++i) {
+        int pos_x = 0;
+        for (unsigned int j = 0; j < cols; ++j) {
+            std::ostringstream oss_cell;
+            oss_cell << "cell " << i << " " << j;
+            
+            // tile id
+            const char *sid = al_get_config_value(map_config, oss_cell.str().c_str(), "id");
+            int id = defaultTileId;
+            if (sid) {
+                id = std::atoi(sid);
+            }
+            
+            //if the tile is passable (i.e. collision detection is ignored)
+            const char *spassable = al_get_config_value(map_config, oss_cell.str().c_str(), "passable");
+            bool passable = true;
+            if (spassable) {
+                passable = std::atoi(spassable) ? true : false;
+            }
+            
+            //create new tile
+            Tile *t = new Tile(pos_x, pos_y, cellSize, cellSize, id);
+            //t->is_passable(passable);
+            cells.push_back(t);
+            
+            pos_x += cellSize;
+        }
+        pos_y += cellSize;
+    }
+    
+    al_destroy_config(map_config);
+    
+    width = calcWidth();
+    height = calcHeight();
+    
+    mapbmp = create_map_bitmap(); //old
+	//mapbmp = new_map();
+    
+    return true;
+}
+
+bool World::load_tileset(const std::string& imgname, int cell_dimension, int gap_x, int gap_y, int offset) {
+                         
+    ALLEGRO_BITMAP *tileimg = al_load_bitmap(imgname.c_str());
+    if (!tileimg) {
+        std::cout << "tileset file not found: " << imgname << std::endl;
+        return false;
+    }
+    
+	this->tileHorizontalGap = gap_x;
+	this->tileVerticalGap = gap_y;
+    this->offset = offset;
+    this->cellSize = cell_dimension;
+	this->tilesetFilename.assign(imgname.c_str());
+    
+    std::cout << "loading " << imgname << std::endl;
+    
+    unsigned int pos_x         = this->offset;
+    unsigned int pos_y         = this->offset;
+    unsigned int bitmap_width  = al_get_bitmap_width(tileimg);
+    unsigned int bitmap_height = al_get_bitmap_height(tileimg);
+    
+    while (pos_y < bitmap_height) {
+        if (pos_x + cellSize < bitmap_width) {
+            ALLEGRO_BITMAP *tile = al_clone_bitmap(al_create_sub_bitmap(tileimg, 
+                                                                        pos_x, 
+                                                                        pos_y, 
+                                                                        cellSize,
+                                                                        cellSize));
+        
+            if (!tile) {
+                std::cout << "error cloning tile" << std::endl;
+                return false;
+            }
+        
+            tiles.push_back(tile);
+			pos_x += cellSize + tileHorizontalGap;
+        } else {
+            pos_x = this->offset;
+			pos_y += cellSize + tileVerticalGap;
+        }
+    }
+    
+    al_destroy_bitmap(tileimg);
+    return true;
+}
+
+
+void World::redraw() const {
+    ALLEGRO_BITMAP *old = al_get_target_bitmap();
+    
+    al_set_target_bitmap(mapbmp);
+    
+    al_clear_to_color(al_map_rgb(0,0,0));
+    
+    for (unsigned int i = 0; i < cells.size(); ++i) {
+        Tile *t = cells[i];
+		al_draw_bitmap(tiles[t->getId()], t->getX(), t->getY(), 0);
+
+        if (show_grid) {
+			cells[i]->drawBoundingBox();
+        }
+    }
+    
+    for (unsigned int i = 0; i < chars.size(); ++i) {
+        chars[i]->draw();
+    }
+    
+    al_set_target_bitmap(old);
+}
+
+void World::draw() {
+    if (always_redraw) {
+        redraw();
+    } else if (must_redraw) {
+        redraw();
+        must_redraw = false;
+    }
+    
+	//this will print the background, the foreground, the player... everything
+    al_draw_bitmap_region(mapbmp, mapX, mapY, visibleWidth, visibleHeight, 0, 0, 0);
+	//std::cout<<"visiblewidth="<<visiblewidth<<"|visibleheight="<<visibleheight<<std::endl;
+}
+
+//###############################################################################################################################
+//###########################################2ND MAP STRATEGY END##############################################################
+//###############################################################################################################################
 
 bool World::loadMap(const char* filename)
 {
